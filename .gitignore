@@ -1,0 +1,28 @@
+# Build
+build/
+CMakeFiles/
+CMakeCache.txt
+*.o
+*.obj
+*.exe
+*.dll
+*.pdb
+*.ilk
+
+# Visual Studio (Windows)
+.vs/
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+
+# VS Code
+.vscode/
+
+# Mac
+.DS_Store
+
+# librerie generate o scaricate localmente
+x64/
+Debug/
+Release/

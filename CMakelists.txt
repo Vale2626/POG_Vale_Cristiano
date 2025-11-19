@@ -1,0 +1,40 @@
+cmake_minimum_required(VERSION 3.16)
+project(pog_opengl C CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Evita warning deprecations di Apple
+if (APPLE)
+  add_definitions(-DGL_SILENCE_DEPRECATION)
+endif()
+
+# Trova GLFW (installa con: brew install glfw)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GLFW3 REQUIRED glfw3)
+
+# Percorsi include
+include_directories(
+  ${GLFW3_INCLUDE_DIRS}
+  ${CMAKE_SOURCE_DIR}/include
+)
+
+# Sorgenti
+add_executable(pog_opengl
+  src/main.cpp
+  src/glad.c
+)
+
+# Link a GLFW + framework macOS necessari
+target_link_libraries(pog_opengl
+  ${GLFW3_LIBRARIES}
+)
+
+if (APPLE)
+  find_library(COCOA_FRAMEWORK Cocoa)
+  find_library(IOKIT_FRAMEWORK IOKit)
+  find_library(COREVIDEO_FRAMEWORK CoreVideo)
+  target_link_libraries(pog_opengl
+    ${COCOA_FRAMEWORK} ${IOKIT_FRAMEWORK} ${COREVIDEO_FRAMEWORK}
+  )
+endif()
