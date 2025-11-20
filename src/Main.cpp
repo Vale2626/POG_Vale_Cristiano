@@ -205,9 +205,8 @@ glDeleteShader(lightFS);
     };*/
 
     //Texture testTex("Modello3D/diffuse.png");
-    Model Modello3D("futuristic_room/futuristic_room.obj");
+    Model Modello3D("big-room/Room-A.obj");
     Model IronMan("iron_man/ironMan.obj");
-
     
 
     GLfloat VerticiLuci[] =                         
@@ -271,7 +270,8 @@ glDeleteShader(lightFS);
     glUseProgram(shaderProgram);
     glUniform1i(glGetUniformLocation(shaderProgram, "tex0"), 0);
 
-    Vector3 modelOffset = Vector3(0.0f, -2.31f, 0.0f);   //manda il modello al centro del sistema
+    const float bigRoomScale = 0.002f; // scala per portare la stanza a dimensioni gestibili
+    Vector3 modelOffset = Vector3(0.0f, 0.0f, 0.0f);          // porta la stanza al centro del sistema
     Vector3 lightPos(modelOffset.x, modelOffset.y  + 3.0f, modelOffset.z + 0.6);       //luce direttamente sopra al modello
 
     //SPOT LIGHT DALL'ALTO 
@@ -287,7 +287,11 @@ glDeleteShader(lightFS);
     glUniform1f(glGetUniformLocation(shaderProgram, "spotLight.linear"), 0.09f);
     glUniform1f(glGetUniformLocation(shaderProgram, "spotLight.quadratic"), 0.032f);
 
-
+    // Posizione iniziale camera: dentro la stanza guardando il centro
+    Vector3 roomCenter = modelOffset;
+    Vector3 eyeStart = roomCenter.sommaVett(Vector3(0.0f, 1.4f, 1.0f)); // più in alto lungo Y e leggermente davanti
+    float yawStart = std::atan2(roomCenter.x - eyeStart.x, roomCenter.z - eyeStart.z);
+    camera.SetPositionAndYaw(eyeStart, yawStart);
 
 
    
@@ -305,7 +309,7 @@ glDeleteShader(lightFS);
       
 
     // Oggetto fermo
-    Matrix4 scaleModel = Matrix4::scale(2.0f);
+    Matrix4 scaleModel = Matrix4::scale(bigRoomScale);
     Matrix4 translateModel = Matrix4::traslate(modelOffset);
     Matrix4 Model = translateModel.prod_mat_mat(scaleModel);     // scalatura + traslazione per riportare il modello al centro
 
@@ -343,8 +347,8 @@ glDeleteShader(lightFS);
     //cubo.Draw();
     Modello3D.Draw();
 
-    Matrix4 ironScale = Matrix4 :: scale(0.0015f);
-    Matrix4 ironTranslate = Matrix4 :: traslate(Vector3(-1.5f, -2.0f, 0.3f));        //posizione dentro la stanza
+    Matrix4 ironScale = Matrix4 :: scale(0.002f);
+    Matrix4 ironTranslate = Matrix4 :: traslate(Vector3(0.0f, 1.4f, 1.0f));        //posizione dentro la stanza
     Matrix4 ironModel = ironTranslate.prod_mat_mat(ironScale);
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "Model"), 1, GL_TRUE, ironModel.data());
     IronMan.Draw();
