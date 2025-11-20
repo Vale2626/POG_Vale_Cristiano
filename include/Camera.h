@@ -11,7 +11,7 @@
 class Camera
 {
     public:
-        Camera(float initialRadius = 2.0, float initialYaw = 0.0f, float initialY = 0.0f);
+        Camera(float initialDistance = 2.0f, float initialYaw = 0.0f, float initialY = 0.0f);
         
         /*
             initialRadius = distanza INIZIALE dall’oggetto (↑ ↓)
@@ -28,29 +28,22 @@ class Camera
         // Restituisce la posizione attuale della camera (l'"occhio")
         Vector3 GetPosition();
 
-        private:
+        Vector3 GetFront();
 
-            float camRadius;
+        private:
             float camYaw;
             float camY;
+            float cam_Move_Speed;
 
             // ---- Posizione Calcolata ----
             Vector3 cam_Position;       //posizione eye calcolata
-            Vector3 cam_target;         //punto che la camera guarda (fisso a 0,0,0)
+            Vector3 cam_front;
+            Vector3 cam_target;         //punto che la camera guarda
             Vector3 cam_up;             //vettore "up" fisso a 0,1,0
 
 
-            /*
-            camRadius = distanza dall’oggetto (↑ ↓)
-            camYaw = angolo attorno all’oggetto (← →)
-            camY = altezza camera(W/S)
-            */
-
             // ---- Impostazioni di Movimento ----
             float cam_Orbit_Speed;
-            float cam_Zoom_Speed;
-            float cam_Pan_Speed;        //velocità di movimento verticale della camera
-            float cam_Min_Radius;
 
             void updateCameraVectors();     //funzione privata per ricalcolare la posizione della camera
 

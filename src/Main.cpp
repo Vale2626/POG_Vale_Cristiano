@@ -74,7 +74,7 @@ int main() {
     glfwGetFramebufferSize(window, &fbW, &fbH);
     glViewport(0, 0, fbW, fbH);     // su Mac (Retina) è fondamentale
 
-    Matrix4 Projection = Matrix4::perspective(60.0f, (float)fbW/(float)fbH, 0.1f, 100.0f);
+    Matrix4 Projection = Matrix4::perspective(60.0f, (float)fbW/(float)fbH, 0.01f, 1000.0f);
 
 
     glEnable(GL_DEPTH_TEST);
@@ -205,8 +205,8 @@ glDeleteShader(lightFS);
     };*/
 
     //Texture testTex("Modello3D/diffuse.png");
-    Model Modello3D("iron_man/ironMan.obj");
-       
+    Model Modello3D("futuristic_room/futuristic_room.obj");
+    
 
     GLfloat VerticiLuci[] =                         
     {       
@@ -303,7 +303,7 @@ glDeleteShader(lightFS);
       
 
     // Oggetto fermo
-    Matrix4 scaleModel = Matrix4::scale(0.002f);
+    Matrix4 scaleModel = Matrix4::scale(2.0f);
     Matrix4 translateModel = Matrix4::traslate(modelOffset);
     Matrix4 Model = translateModel.prod_mat_mat(scaleModel);     // scalatura + traslazione per riportare il modello al centro
 
@@ -340,6 +340,7 @@ glDeleteShader(lightFS);
 
     //cubo.Draw();
     Modello3D.Draw();
+   
 
 
     glUseProgram(LightProgram);
