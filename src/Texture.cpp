@@ -15,7 +15,7 @@ Texture::Texture(const std::string& path) : ID_texture(0)
     this->path = path;
     int tex_width, tex_height, tex_channels;
 
-    stbi_set_flip_vertically_on_load(true); 
+    //stbi_set_flip_vertically_on_load(true); 
     
     // FORZA 4 CANALI (RGBA)
     unsigned char* data = stbi_load(path.c_str(), &tex_width, &tex_height, &tex_channels, 4);
@@ -33,8 +33,8 @@ Texture::Texture(const std::string& path) : ID_texture(0)
         glBindTexture(GL_TEXTURE_2D, ID_texture);
 
         // --- MODIFICA 2: Cambia i filtri per supportare i Mipmaps ---
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // o GL_REPEAT, come preferisci
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); // o GL_REPEAT
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_LINEAR);
 
         // ABILITA MIPMAPS: usa GL_NEAREST_MIPMAP_LINEAR
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR); 
@@ -83,5 +83,4 @@ void Texture::Unbind() const
 {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
-
 

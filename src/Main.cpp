@@ -206,6 +206,8 @@ glDeleteShader(lightFS);
 
     //Texture testTex("Modello3D/diffuse.png");
     Model Modello3D("futuristic_room/futuristic_room.obj");
+    Model IronMan("iron_man/ironMan.obj");
+
     
 
     GLfloat VerticiLuci[] =                         
@@ -270,14 +272,14 @@ glDeleteShader(lightFS);
     glUniform1i(glGetUniformLocation(shaderProgram, "tex0"), 0);
 
     Vector3 modelOffset = Vector3(0.0f, -2.31f, 0.0f);   //manda il modello al centro del sistema
-    Vector3 lightPos(modelOffset.x, modelOffset.y + 1.2f, modelOffset.z);       //luce direttamente sopra al modello
+    Vector3 lightPos(modelOffset.x, modelOffset.y  + 3.0f, modelOffset.z + 0.6);       //luce direttamente sopra al modello
 
     //SPOT LIGHT DALL'ALTO 
     glUseProgram(shaderProgram);
     glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.position"), lightPos.x, lightPos.y, lightPos.z);
     glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.direction"), 0.0f, -1.0f, 0.0f);
-    glUniform1f(glGetUniformLocation(shaderProgram, "spotLight.cutOff"), std::cos(12.5f * M_PI / 180.0f));
-    glUniform1f(glGetUniformLocation(shaderProgram, "spotLight.outerCutOff"), std::cos(17.5f * M_PI / 180.0f));
+    glUniform1f(glGetUniformLocation(shaderProgram, "spotLight.cutOff"), std::cos(20.5f * M_PI / 180.0f));
+    glUniform1f(glGetUniformLocation(shaderProgram, "spotLight.outerCutOff"), std::cos(18.5f * M_PI / 180.0f));
     glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.ambient"), 0.1f, 0.1f, 0.1f);
     glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.diffuse"), 0.8f, 0.8f, 0.8f);
     glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.specular"), 1.0f, 1.0f, 1.0f);
@@ -316,7 +318,7 @@ glDeleteShader(lightFS);
     glUseProgram(shaderProgram);
 
     // invio matrici
-    glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "Model"), 1, GL_TRUE,Model.data());   //GL_TRUE ci dice che i dati che ti sto passando con .data() sono in Row-Major. Per favore, TRASPONILI (inverti righe e colonne) mentre li leggi, per convertirli nel tuo formato Column-Major."
+    glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "Model"), 1, GL_TRUE, Model.data());
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "View"), 1, GL_TRUE, View.data());
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "Projection"), 1, GL_TRUE, Projection.data());      //Projection.data() dice a OpenGL dove inizia la mia matrice in memoria (a)
 
@@ -340,6 +342,12 @@ glDeleteShader(lightFS);
 
     //cubo.Draw();
     Modello3D.Draw();
+
+    Matrix4 ironScale = Matrix4 :: scale(0.0015f);
+    Matrix4 ironTranslate = Matrix4 :: traslate(Vector3(-1.5f, -2.0f, 0.3f));        //posizione dentro la stanza
+    Matrix4 ironModel = ironTranslate.prod_mat_mat(ironScale);
+    glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "Model"), 1, GL_TRUE, ironModel.data());
+    IronMan.Draw();
    
 
 
@@ -359,7 +367,7 @@ glDeleteShader(lightFS);
     glUniformMatrix4fv(mvpLocL, 1, GL_TRUE, lightMVP.data());
 
     // 3) disegno cubo luce
-    //lightVAO.Bind();
+    lightVAO.Bind();
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
     glfwSwapBuffers(window);

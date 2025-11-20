@@ -70,9 +70,7 @@ void main() {
     vec3 specularS = spotLight.specular * specAmountS * ksS;
 
     float distanceS = length(spotLight.position - vFragPos);
-    float attenuation = 1.0 / (spotLight.constant
-                             + spotLight.linear * distanceS
-                             + spotLight.quadratic * (distanceS * distanceS));
+    float attenuation = 1.0 / (spotLight.constant + spotLight.linear * distanceS + spotLight.quadratic * (distanceS * distanceS));
 
     diffuseS  *= intensity;
     specularS *= intensity;
