@@ -17,7 +17,7 @@
 #include <vector>
 #include "Model.h"
 
-Camera camera(2.0f, 0.0f, 0.0f);
+Camera camera(0.0f, 0.0f, 0.48f);        //del tipo z, x , y.  --> distanza, angolo iniziale dela camera (rotazione attorno all asse Y), ALTEZZA CAMERA
 
 void processInput(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -270,7 +270,7 @@ glDeleteShader(lightFS);
     glUseProgram(shaderProgram);
     glUniform1i(glGetUniformLocation(shaderProgram, "tex0"), 0);
 
-    const float bigRoomScale = 0.002f; // scala per portare la stanza a dimensioni gestibili
+    const float bigRoomScale = 0.008f; // scala per portare la stanza a dimensioni gestibili
     Vector3 modelOffset = Vector3(0.0f, 0.0f, 0.0f);          // porta la stanza al centro del sistema
     Vector3 lightPos(modelOffset.x, modelOffset.y  + 3.0f, modelOffset.z + 0.6);       //luce direttamente sopra al modello
 
@@ -289,7 +289,7 @@ glDeleteShader(lightFS);
 
     // Posizione iniziale camera: dentro la stanza guardando il centro
     Vector3 roomCenter = modelOffset;
-    Vector3 eyeStart = roomCenter.sommaVett(Vector3(0.0f, 1.4f, 1.0f)); // più in alto lungo Y e leggermente davanti
+    Vector3 eyeStart = roomCenter.sommaVett(Vector3(0.0f, 0.0f, 0.0f)); // più in alto lungo Y e leggermente davanti
     float yawStart = std::atan2(roomCenter.x - eyeStart.x, roomCenter.z - eyeStart.z);
     camera.SetPositionAndYaw(eyeStart, yawStart);
 
@@ -347,8 +347,8 @@ glDeleteShader(lightFS);
     //cubo.Draw();
     Modello3D.Draw();
 
-    Matrix4 ironScale = Matrix4 :: scale(0.002f);
-    Matrix4 ironTranslate = Matrix4 :: traslate(Vector3(0.0f, 1.4f, 1.0f));        //posizione dentro la stanza
+    Matrix4 ironScale = Matrix4 :: scale(0.0002f);
+    Matrix4 ironTranslate = Matrix4 :: traslate(Vector3(3.0f, 0.0f, -0.7f));        //posizione dentro la stanza
     Matrix4 ironModel = ironTranslate.prod_mat_mat(ironScale);
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "Model"), 1, GL_TRUE, ironModel.data());
     IronMan.Draw();
@@ -371,8 +371,8 @@ glDeleteShader(lightFS);
     glUniformMatrix4fv(mvpLocL, 1, GL_TRUE, lightMVP.data());
 
     // 3) disegno cubo luce
-    lightVAO.Bind();
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+    //lightVAO.Bind();
+    //glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
     glfwSwapBuffers(window);
     glfwPollEvents();

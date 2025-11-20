@@ -12,8 +12,8 @@ newmtl FinestreTelaio
 	Kd 1.000000 1.000000 1.000000
 	Ks 0.000000 0.000000 0.000000
 	Ke 0.000000 0.000000 0.000000
-	map_Ka D:\Mapmy\ArchMat\leather black.jpg
-	map_Kd D:\Mapmy\ArchMat\leather black.jpg
+	map_Ka BodyVRayCompleteMap.jpg
+	map_Kd BodyVRayCompleteMap.jpg
 
 newmtl Finestre
 	Ns 10.000000
@@ -38,8 +38,8 @@ newmtl Room_Dirt
 	Kd 0.500000 0.500000 0.500000
 	Ks 0.000000 0.000000 0.000000
 	Ke 0.000000 0.000000 0.000000
-	map_Ka E:\Clienti 2018\Second Life\Separate A\Room-Color-A01VRayTotalLightingMap.jpg
-	map_Kd E:\Clienti 2018\Second Life\Separate A\Room-Color-A01VRayTotalLightingMap.jpg
+	map_Ka Room-Color-A01VRayTotalLightingMap.jpg
+	map_Kd Room-Color-A01VRayTotalLightingMap.jpg
 
 newmtl Supportube
 	Ns 10.000000
@@ -76,8 +76,8 @@ newmtl CornixPictures
 	Kd 0.500000 0.500000 0.500000
 	Ks 0.000000 0.000000 0.000000
 	Ke 0.000000 0.000000 0.000000
-	map_Ka E:\Clienti 2018\Second Life\Separate A\CornixPicturesVRayCompleteMap.jpg
-	map_Kd E:\Clienti 2018\Second Life\Separate A\CornixPicturesVRayCompleteMap.jpg
+	map_Ka CornixPicturesVRayCompleteMap.jpg
+	map_Kd CornixPicturesVRayCompleteMap.jpg
 
 newmtl Dondolo
 	Ns 10.000000
@@ -90,8 +90,8 @@ newmtl Dondolo
 	Kd 0.500000 0.500000 0.500000
 	Ks 0.000000 0.000000 0.000000
 	Ke 0.000000 0.000000 0.000000
-	map_Ka E:\Clienti 2018\Second Life\Separate A\DondoloVRayCompleteMap.jpg
-	map_Kd E:\Clienti 2018\Second Life\Separate A\DondoloVRayCompleteMap.jpg
+	map_Ka DondoloVRayCompleteMap.jpg
+	map_Kd DondoloVRayCompleteMap.jpg
 
 newmtl Sofa
 	Ns 10.000000
@@ -104,8 +104,8 @@ newmtl Sofa
 	Kd 0.500000 0.500000 0.500000
 	Ks 0.000000 0.000000 0.000000
 	Ke 0.000000 0.000000 0.000000
-	map_Ka E:\Clienti 2018\Second Life\Separate A\SofaVRayCompleteMap.jpg
-	map_Kd E:\Clienti 2018\Second Life\Separate A\SofaVRayCompleteMap.jpg
+	map_Ka SofaVRayCompleteMap.jpg
+	map_Kd SofaVRayCompleteMap.jpg
 
 newmtl Como
 	Ns 10.000000
@@ -118,8 +118,8 @@ newmtl Como
 	Kd 0.500000 0.500000 0.500000
 	Ks 0.000000 0.000000 0.000000
 	Ke 0.000000 0.000000 0.000000
-	map_Ka E:\Clienti 2018\Second Life\Separate A\ComoVRayCompleteMap.jpg
-	map_Kd E:\Clienti 2018\Second Life\Separate A\ComoVRayCompleteMap.jpg
+	map_Ka ComoVRayCompleteMap.jpg
+	map_Kd ComoVRayCompleteMap.jpg
 
 newmtl RoundTable
 	Ns 10.000000
@@ -132,8 +132,8 @@ newmtl RoundTable
 	Kd 0.500000 0.500000 0.500000
 	Ks 0.000000 0.000000 0.000000
 	Ke 0.000000 0.000000 0.000000
-	map_Ka E:\Clienti 2018\Second Life\Separate A\RoundTableVRayCompleteMap.jpg
-	map_Kd E:\Clienti 2018\Second Life\Separate A\RoundTableVRayCompleteMap.jpg
+	map_Ka RoundTableVRayCompleteMap.jpg
+	map_Kd RoundTableVRayCompleteMap.jpg
 
 newmtl StandLamp
 	Ns 10.000000
@@ -146,8 +146,8 @@ newmtl StandLamp
 	Kd 0.500000 0.500000 0.500000
 	Ks 0.000000 0.000000 0.000000
 	Ke 0.000000 0.000000 0.000000
-	map_Ka E:\Clienti 2018\Second Life\Separate A\StandLampVRayCompleteMap.jpg
-	map_Kd E:\Clienti 2018\Second Life\Separate A\StandLampVRayCompleteMap.jpg
+	map_Ka StandLampVRayCompleteMap.jpg
+	map_Kd StandLampVRayCompleteMap.jpg
 
 newmtl Condotto
 	Ns 10.000000
@@ -160,8 +160,8 @@ newmtl Condotto
 	Kd 0.500000 0.500000 0.500000
 	Ks 0.000000 0.000000 0.000000
 	Ke 0.000000 0.000000 0.000000
-	map_Ka E:\Clienti 2018\Second Life\Separate A\CondottoVRayCompleteMap.jpg
-	map_Kd E:\Clienti 2018\Second Life\Separate A\CondottoVRayCompleteMap.jpg
+	map_Ka CondottoVRayCompleteMap.jpg
+	map_Kd CondottoVRayCompleteMap.jpg
 
 newmtl Frridge
 	Ns 10.000000
@@ -174,8 +174,8 @@ newmtl Frridge
 	Kd 0.500000 0.500000 0.500000
 	Ks 0.000000 0.000000 0.000000
 	Ke 0.000000 0.000000 0.000000
-	map_Ka E:\Clienti 2018\Second Life\Separate A\FrridgeVRayCompleteMap.jpg
-	map_Kd E:\Clienti 2018\Second Life\Separate A\FrridgeVRayCompleteMap.jpg
+	map_Ka FrridgeVRayCompleteMap.jpg
+	map_Kd FrridgeVRayCompleteMap.jpg
 
 newmtl Bici
 	Ns 10.000000
@@ -188,8 +188,8 @@ newmtl Bici
 	Kd 0.588000 0.588000 0.588000
 	Ks 0.000000 0.000000 0.000000
 	Ke 0.000000 0.000000 0.000000
-	map_Ka E:\Clienti 2018\Second Life\Separate A\COM_Vehicle_CarD_Bicycle01_S01.jpg
-	map_Kd E:\Clienti 2018\Second Life\Separate A\COM_Vehicle_CarD_Bicycle01_S01.jpg
+	map_Ka COM_Vehicle_CarD_Bicycle01_S01.jpg
+	map_Kd COM_Vehicle_CarD_Bicycle01_S01.jpg
 
 newmtl Gamla_Tonda_Red
 	Ns 10.000000
@@ -202,8 +202,8 @@ newmtl Gamla_Tonda_Red
 	Kd 0.500000 0.500000 0.500000
 	Ks 0.000000 0.000000 0.000000
 	Ke 0.000000 0.000000 0.000000
-	map_Ka E:\Clienti 2018\Second Life\Separate A\Gamla Tonda Red A1VRayCompleteMap.jpg
-	map_Kd E:\Clienti 2018\Second Life\Separate A\Gamla Tonda Red A1VRayCompleteMap.jpg
+	map_Ka Gamla_Tonda_Red_A1VRayCompleteMap.jpg
+	map_Kd Gamla_Tonda_Red_A1VRayCompleteMap.jpg
 
 newmtl GamlaGialla
 	Ns 10.000000
@@ -216,8 +216,8 @@ newmtl GamlaGialla
 	Kd 0.500000 0.500000 0.500000
 	Ks 0.000000 0.000000 0.000000
 	Ke 0.000000 0.000000 0.000000
-	map_Ka E:\Clienti 2018\Second Life\Separate A\GamlaGialla A01VRayCompleteMap.jpg
-	map_Kd E:\Clienti 2018\Second Life\Separate A\GamlaGialla A01VRayCompleteMap.jpg
+	map_Ka GamlaGialla_A01VRayCompleteMap.jpg
+	map_Kd GamlaGialla_A01VRayCompleteMap.jpg
 
 newmtl TelaioSgabello
 	Ns 10.000000
@@ -230,8 +230,8 @@ newmtl TelaioSgabello
 	Kd 0.500000 0.500000 0.500000
 	Ks 0.000000 0.000000 0.000000
 	Ke 0.000000 0.000000 0.000000
-	map_Ka E:\Clienti 2018\Second Life\Separate A\TelaioSgabello-VRayTotalLightingMap.jpg
-	map_Kd E:\Clienti 2018\Second Life\Separate A\TelaioSgabello-VRayTotalLightingMap.jpg
+	map_Ka TelaioSgabello-VRayTotalLightingMap.jpg
+	map_Kd TelaioSgabello-VRayTotalLightingMap.jpg
 
 newmtl TablelongDirt
 	Ns 10.000000
@@ -244,8 +244,8 @@ newmtl TablelongDirt
 	Kd 0.500000 0.500000 0.500000
 	Ks 0.000000 0.000000 0.000000
 	Ke 0.000000 0.000000 0.000000
-	map_Ka E:\Clienti 2018\Second Life\Separate A\TablelongVRayCompleteMap.jpg
-	map_Kd E:\Clienti 2018\Second Life\Separate A\TablelongVRayCompleteMap.jpg
+	map_Ka TablelongVRayCompleteMap.jpg
+	map_Kd TablelongVRayCompleteMap.jpg
 
 newmtl Standardmaterial
 	Ns 10.000000
@@ -258,8 +258,8 @@ newmtl Standardmaterial
 	Kd 0.500000 0.500000 0.500000
 	Ks 0.000000 0.000000 0.000000
 	Ke 0.000000 0.000000 0.000000
-	map_Ka E:\Clienti 2018\Second Life\Separate A\TelaioSgabello-VRayTotalLightingMap.jpg
-	map_Kd E:\Clienti 2018\Second Life\Separate A\TelaioSgabello-VRayTotalLightingMap.jpg
+	map_Ka TelaioSgabello-VRayTotalLightingMap.jpg
+	map_Kd TelaioSgabello-VRayTotalLightingMap.jpg
 
 newmtl wire_184228153
 	Ns 32
@@ -282,8 +282,8 @@ newmtl ScaffaleLibri
 	Kd 0.500000 0.500000 0.500000
 	Ks 0.000000 0.000000 0.000000
 	Ke 0.000000 0.000000 0.000000
-	map_Ka E:\Clienti 2018\Second Life\Separate A\ScaffaleLibriVRayCompleteMap.jpg
-	map_Kd E:\Clienti 2018\Second Life\Separate A\ScaffaleLibriVRayCompleteMap.jpg
+	map_Ka ScaffaleLibriVRayCompleteMap.jpg
+	map_Kd ScaffaleLibriVRayCompleteMap.jpg
 
 newmtl Sgabellotto
 	Ns 10.000000
@@ -296,8 +296,8 @@ newmtl Sgabellotto
 	Kd 0.500000 0.500000 0.500000
 	Ks 0.000000 0.000000 0.000000
 	Ke 0.000000 0.000000 0.000000
-	map_Ka E:\Clienti 2018\Second Life\Separate A\Sgabellotto001VRayCompleteMap.jpg
-	map_Kd E:\Clienti 2018\Second Life\Separate A\Sgabellotto001VRayCompleteMap.jpg
+	map_Ka Sgabellotto001VRayCompleteMap.jpg
+	map_Kd Sgabellotto001VRayCompleteMap.jpg
 
 newmtl Cucinino
 	Ns 10.000000
@@ -310,8 +310,8 @@ newmtl Cucinino
 	Kd 0.500000 0.500000 0.500000
 	Ks 0.000000 0.000000 0.000000
 	Ke 0.000000 0.000000 0.000000
-	map_Ka E:\Clienti 2018\Second Life\Separate A\CucininoVRayCompleteMap.jpg
-	map_Kd E:\Clienti 2018\Second Life\Separate A\CucininoVRayCompleteMap.jpg
+	map_Ka CucininoVRayCompleteMap.jpg
+	map_Kd CucininoVRayCompleteMap.jpg
 
 newmtl Libri
 	Ns 10.000000
@@ -324,8 +324,8 @@ newmtl Libri
 	Kd 0.500000 0.500000 0.500000
 	Ks 0.000000 0.000000 0.000000
 	Ke 0.000000 0.000000 0.000000
-	map_Ka E:\Clienti 2018\Second Life\Separate A\LibriVRayCompleteMap.jpg
-	map_Kd E:\Clienti 2018\Second Life\Separate A\LibriVRayCompleteMap.jpg
+	map_Ka LibriVRayCompleteMap.jpg
+	map_Kd LibriVRayCompleteMap.jpg
 
 newmtl Dustbin
 	Ns 10.000000
@@ -350,8 +350,8 @@ newmtl CoffeTable
 	Kd 0.500000 0.500000 0.500000
 	Ks 0.000000 0.000000 0.000000
 	Ke 0.000000 0.000000 0.000000
-	map_Ka E:\Clienti 2018\Second Life\Separate A\CoffeTableVRayCompleteMap.jpg
-	map_Kd E:\Clienti 2018\Second Life\Separate A\CoffeTableVRayCompleteMap.jpg
+	map_Ka CoffeTableVRayCompleteMap.jpg
+	map_Kd CoffeTableVRayCompleteMap.jpg
 
 newmtl CoffeTableVetro
 	Ns 45.999996
@@ -422,5 +422,5 @@ newmtl Body
 	Kd 0.500000 0.500000 0.500000
 	Ks 0.000000 0.000000 0.000000
 	Ke 0.000000 0.000000 0.000000
-	map_Ka E:\Clienti 2018\Second Life\Separate A\BodyVRayCompleteMap.jpg
-	map_Kd E:\Clienti 2018\Second Life\Separate A\BodyVRayCompleteMap.jpg
+	map_Ka BodyVRayCompleteMap.jpg
+	map_Kd BodyVRayCompleteMap.jpg

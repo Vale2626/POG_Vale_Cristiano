@@ -14,8 +14,8 @@ Camera::Camera(float initialDistance, float initialYaw, float initialY)
     cam_up = Vector3(0.0f, 1.0f, 0.0f);
 
     //impostazioni di velocità, possono essere cambiate qui:
-    cam_Orbit_Speed = 0.08f;
-    cam_Move_Speed = 0.04f;
+    cam_Orbit_Speed = 0.02f;
+    cam_Move_Speed = 0.009f;
 
     //calcolo della direzione iniziale
     updateCameraVectors();
