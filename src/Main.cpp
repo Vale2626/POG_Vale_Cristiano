@@ -80,8 +80,8 @@ int main() {
     glEnable(GL_DEPTH_TEST);
 
     // --- Compilazione shader Oggetto ---
-    std::string objectVSsrc = loadTextFile("Shaders/default.vert"); // Assicurati che il percorso sia corretto!
-    std::string objectFSsrc = loadTextFile("Shaders/default.frag"); // Assicurati che il percorso sia corretto!
+    std::string objectVSsrc = loadTextFile("shaders/default.vert"); // Assicurati che il percorso sia corretto!
+    std::string objectFSsrc = loadTextFile("shaders/default.frag"); // Assicurati che il percorso sia corretto!
 
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     const char* ovs = objectVSsrc.c_str();
@@ -105,8 +105,8 @@ int main() {
     glDeleteShader(fragmentShader);
 
     // --- shader Luce ---
-std::string lightVSsrc = loadTextFile("Shaders/light.vert");
-std::string lightFSsrc = loadTextFile("Shaders/light.frag");
+std::string lightVSsrc = loadTextFile("shaders/light.vert");
+std::string lightFSsrc = loadTextFile("shaders/light.frag");
 
 GLuint lightVS = glCreateShader(GL_VERTEX_SHADER);
 const char* lvs = lightVSsrc.c_str();
