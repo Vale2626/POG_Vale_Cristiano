@@ -55,12 +55,24 @@ Texture::Texture(const std::string& path) : ID_texture(0)
     }
     else
     {
-        // Blocco errore fatale...
-        std::cout << "\n\n--- ERRORE FATALE ---\n" << std::endl;
-        std::cout << "Impossibile caricare la texture al percorso: " << path << std::endl;
-        std::cout << "\n---------------------\n\n" << std::endl;
+        // Se la texture non si trova (es. percorsi assoluti tipo D:\) uso un pixel bianco per non far crashare l'app
+        std::cout << "WARNING: impossibile caricare la texture: " << path << " -> uso fallback bianco 1x1" << std::endl;
+        const unsigned char whitePixel[4] = {255, 255, 255, 255};
+
+        GLenum source_format = GL_RGBA;
+        GLenum internal_format = GL_RGBA;
+
+        glGenTextures(1, &ID_texture);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, ID_texture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR); 
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); 
+        glTexImage2D(GL_TEXTURE_2D, 0, internal_format, 1, 1, 0, source_format, GL_UNSIGNED_BYTE, whitePixel);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
         stbi_image_free(data); 
-        exit(1); 
     }
 }
 
@@ -83,4 +95,3 @@ void Texture::Unbind() const
 {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
-

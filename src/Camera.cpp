@@ -14,8 +14,8 @@ Camera::Camera(float initialDistance, float initialYaw, float initialY)
     cam_up = Vector3(0.0f, 1.0f, 0.0f);
 
     //impostazioni di velocità, possono essere cambiate qui:
-    cam_Orbit_Speed = 0.02f;
-    cam_Move_Speed = 0.05f;
+    cam_Orbit_Speed = 0.08f;
+    cam_Move_Speed = 0.04f;
 
     //calcolo della direzione iniziale
     updateCameraVectors();
@@ -87,4 +87,11 @@ Vector3 Camera::GetPosition()
 Vector3 Camera::GetFront()
 {
     return cam_front;
+}
+
+void Camera::SetPositionAndYaw(const Vector3& position, float yaw)
+{
+    cam_Position = position;
+    camYaw = yaw;
+    updateCameraVectors();
 }
