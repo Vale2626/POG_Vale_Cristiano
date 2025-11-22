@@ -356,33 +356,27 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
     const float roomScaleFactor = 0.25f;                          // scala stanza
     const Vector3 roomOffset(1.9f * roomScaleFactor, 0.29f, 0.28f); // baricentro stanza letto da .obj
     const float ironScaleFactor = 0.0002f;                        // scala Iron Man
-    const Vector3 ironOffset(0.32f, 0.026f, -0.23f);                  // posizione di Iron Man nella stanza
+    const Vector3 ironOffset(0.04f, 0.026f, 0.5f);                  // posizione di Iron Man nella stanza
+    
+
 
     Matrix4 roomScale = Matrix4::scale(roomScaleFactor);
+    Matrix4 roomRotate = Matrix4::rotateY(90.0f);                 // ruoto la stanza: base allineata sull'asse X
     Matrix4 roomTranslate = Matrix4::traslate(roomOffset);
-    Matrix4 roomModel = roomTranslate.prod_mat_mat(roomScale);
+    Matrix4 roomModel = roomTranslate.prod_mat_mat(roomRotate);
+    roomModel = roomModel.prod_mat_mat(roomScale);
 
     Matrix4 ironScale = Matrix4::scale(ironScaleFactor);
+    Matrix4 ironRotate = Matrix4::rotateY(90.0f);                 // ruoto Iron Man di 45° attorno a Y
     Matrix4 ironTranslate = Matrix4::traslate(ironOffset);
-    Matrix4 ironModel = ironTranslate.prod_mat_mat(ironScale);
+    Matrix4 ironModel = ironTranslate.prod_mat_mat(ironRotate);
+    ironModel = ironModel.prod_mat_mat(ironScale);
+   
 
 
     // Posizione del cubo luce (in cima alla lampada) e direzione verso il basso
     Vector3 lightPos(0.32f, 0.58f, -0.24f);      //(0.46f, 0.33f, 0.68f) posizione dentro lampada
     Vector3 spotDir(0.0f, -1.0f, 0.0f);          // verso il pavimento
-
-    //SPOT LIGHT DALL'ALTO 
-    glUseProgram(shaderProgram);
-    glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.position"), lightPos.x, lightPos.y, lightPos.z);
-    glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.direction"), spotDir.x, spotDir.y, spotDir.z);
-    glUniform1f(glGetUniformLocation(shaderProgram, "spotLight.cutOff"), std::cos(20.5f * M_PI / 180.0f));
-    glUniform1f(glGetUniformLocation(shaderProgram, "spotLight.outerCutOff"), std::cos(18.5f * M_PI / 180.0f));
-    glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.ambient"), 0.1f, 0.1f, 0.1f); // ambient tenue
-    glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.diffuse"), 0.8f, 0.8f, 0.8f);
-    glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.specular"), 1.0f, 1.0f, 1.0f);
-    glUniform1f(glGetUniformLocation(shaderProgram, "spotLight.constant"), 1.0f);
-    glUniform1f(glGetUniformLocation(shaderProgram, "spotLight.linear"), 0.09f);
-    glUniform1f(glGetUniformLocation(shaderProgram, "spotLight.quadratic"), 0.032f);
 
     // Posizione iniziale camera: dentro la stanza guardando il centro
     Vector3 roomCenter = roomOffset;
@@ -425,6 +419,21 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
     // Posizione camera in orbita
     Matrix4 View = camera.GetViewMatrix();
     Vector3 eye = camera.GetPosition();
+    Vector3 spotDirCam = camera.GetFront(); // direzione torcia dal punto di vista della camera
+
+    // SPOT LIGHT come torcia in mano (segue posizione e direzione della camera)
+    glUseProgram(shaderProgram);
+    glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.position"), eye.x, eye.y, eye.z);
+    glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.direction"), spotDirCam.x, spotDirCam.y, spotDirCam.z);
+    // Nota: cutOff deve essere più grande di outerCutOff come valore di coseno (angolo interno < angolo esterno)
+    glUniform1f(glGetUniformLocation(shaderProgram, "spotLight.cutOff"), std::cos(12.5f * M_PI / 180.0f));   // angolo interno (più stretto)
+    glUniform1f(glGetUniformLocation(shaderProgram, "spotLight.outerCutOff"), std::cos(20.0f * M_PI / 180.0f)); // angolo esterno (più largo)
+    glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.ambient"), 0.1f, 0.1f, 0.1f);
+    glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.diffuse"), 0.8f, 0.8f, 0.8f);
+    glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.specular"), 1.0f, 1.0f, 1.0f);
+    glUniform1f(glGetUniformLocation(shaderProgram, "spotLight.constant"), 1.0f);
+    glUniform1f(glGetUniformLocation(shaderProgram, "spotLight.linear"), 0.09f);
+    glUniform1f(glGetUniformLocation(shaderProgram, "spotLight.quadratic"), 0.032f);
    
 
     // === DISEGNA CUBO GRANDE (OGGETTO) ===
@@ -441,12 +450,12 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
     glUniform3f(glGetUniformLocation(shaderProgram, "camPos"),     eye.x, eye.y, eye.z);
     glUniform3f(glGetUniformLocation(shaderProgram, "ambientColor"), 1.0f, 1.0f, 1.0f); // luce ambiente bianca
 
-    /*
-    effetto torcia con spotlight
+    
+    //effetto torcia con spotlight
     glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.position"), eye.x, eye.y, eye.z);
     Vector3 dir = camera.GetFront();
     glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.direction"), dir.x, dir.y, dir.z);
-    */
+    
 
 
 

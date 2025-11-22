@@ -456,6 +456,34 @@ Matrix4 Matrix4 :: traslate(const Vector3& translation)
 
 }
 
+Matrix4 Matrix4 :: rotateX(float degrees)
+{
+    float rad = degrees * (M_PI / 180.0f);
+    float c = std::cos(rad);
+    float s = std::sin(rad);
+
+    Matrix4 Mat4 = Matrix4::Identity();
+    Mat4.f = c;
+    Mat4.g = -s;
+    Mat4.j = s;
+    Mat4.k = c;
+    return Mat4;
+}
+
+Matrix4 Matrix4 :: rotateY(float degrees)
+{
+    float rad = degrees * (M_PI / 180.0f);
+    float c = std::cos(rad);
+    float s = std::sin(rad);
+
+    Matrix4 Mat4 = Matrix4::Identity();
+    Mat4.a = c;
+    Mat4.c = s;
+    Mat4.i = -s;
+    Mat4.k = c;
+    return Mat4;
+}
+
 Matrix4 Matrix4 :: scale(const Vector3& scaling)
 {
     Matrix4 Mat4 = Matrix4::Identity();
@@ -472,4 +500,3 @@ Matrix4 Matrix4 :: scale(float uniformScale)        //matrice di scalatura per i
     Vector3 factors(uniformScale, uniformScale, uniformScale);
     return Matrix4::scale(factors);
 }
-
