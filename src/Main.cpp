@@ -16,8 +16,9 @@
 #include "Texture.h"
 #include <vector>
 #include "Model.h"
+#include "Skybox.h"
 
-Camera camera(0.0f, 0.0f, 0.48f);        //del tipo z, x , y.  --> distanza, angolo iniziale dela camera (rotazione attorno all asse Y), ALTEZZA CAMERA
+Camera camera(0.2f, 0.0f, 0.3987f);        //del tipo z, x , y.  --> distanza, angolo iniziale dela camera (rotazione attorno all asse Y), ALTEZZA CAMERA
 
 void processInput(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -132,6 +133,33 @@ checkShaderErrors(LightProgram, "PROGRAM (Luce)");
 glDeleteShader(lightVS);
 glDeleteShader(lightFS);
 
+// --- shader Skybox ---
+std::string skyboxVSsrc = loadTextFile("shaders/skybox.vert");
+std::string skyboxFSsrc = loadTextFile("shaders/skybox.frag");
+
+GLuint skyboxVS = glCreateShader(GL_VERTEX_SHADER);
+const char* svs = skyboxVSsrc.c_str();
+glShaderSource(skyboxVS, 1, &svs, nullptr);
+glCompileShader(skyboxVS);
+checkShaderErrors(skyboxVS, "VERTEX (Skybox)");
+
+GLuint skyboxFS = glCreateShader(GL_FRAGMENT_SHADER);
+const char* sfs = skyboxFSsrc.c_str();
+glShaderSource(skyboxFS, 1, &sfs, nullptr);
+glCompileShader(skyboxFS);
+checkShaderErrors(skyboxFS, "FRAGMENT (Skybox)");
+
+GLuint skyboxProgram = glCreateProgram();
+glAttachShader(skyboxProgram, skyboxVS);
+glAttachShader(skyboxProgram, skyboxFS);
+glLinkProgram(skyboxProgram);
+checkShaderErrors(skyboxProgram, "PROGRAM (Skybox)");
+
+glDeleteShader(skyboxVS);
+glDeleteShader(skyboxFS);
+glUseProgram(skyboxProgram);
+glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
+
 
 
     // Vertici e indici per un parallelepipedo
@@ -205,8 +233,9 @@ glDeleteShader(lightFS);
     };*/
 
     //Texture testTex("Modello3D/diffuse.png");
-    Model Modello3D("big-room/Room-A.obj");
+    //Model Modello3D("big-room/Room-A.obj");
     Model IronMan("iron_man/ironMan.obj");
+    Model Modello3D("CozyRoom/CozyRoom.obj");
     
 
     GLfloat VerticiLuci[] =                         
@@ -264,23 +293,91 @@ glDeleteShader(lightFS);
 
         lightVAO.Unbind();
 
+    // === SKYBOX VAO/VBO ===
+   // === SKYBOX VAO/VBO ===
+    float skyboxVertices[] = {
+                                        //(cubo dal min 0 al max 1). utile per creare un cubo attorno alla camera per poi appicargli le immagini della cubemap
+         0.0f, 1.0f, 0.0f,
+         0.0f, 0.0f, 0.0f,
+         1.0f, 0.0f, 0.0f,
+         1.0f, 0.0f, 0.0f,
+         1.0f, 1.0f, 0.0f,
+         0.0f, 1.0f, 0.0f,
+
+         0.0f, 0.0f, 1.0f,
+         0.0f, 0.0f, 0.0f,
+         0.0f, 1.0f, 0.0f,
+         0.0f, 1.0f, 0.0f,
+         0.0f, 1.0f, 1.0f,
+         0.0f, 0.0f, 1.0f,
+
+         1.0f, 0.0f, 0.0f,
+         1.0f, 0.0f, 1.0f,
+         1.0f, 1.0f, 1.0f,
+         1.0f, 1.0f, 1.0f,
+         1.0f, 1.0f, 0.0f,
+         1.0f, 0.0f, 0.0f,
+
+         0.0f, 0.0f, 1.0f,
+         0.0f, 1.0f, 1.0f,
+         1.0f, 1.0f, 1.0f,
+         1.0f, 1.0f, 1.0f,
+         1.0f, 0.0f, 1.0f,
+         0.0f, 0.0f, 1.0f,
+
+         0.0f, 1.0f, 0.0f,
+         1.0f, 1.0f, 0.0f,
+         1.0f, 1.0f, 1.0f,
+         1.0f, 1.0f, 1.0f,
+         0.0f, 1.0f, 1.0f,
+         0.0f, 1.0f, 0.0f,
+
+         0.0f, 0.0f, 0.0f,
+         0.0f, 0.0f, 1.0f,
+         1.0f, 0.0f, 0.0f,
+         1.0f, 0.0f, 0.0f,
+         0.0f, 0.0f, 1.0f,
+         1.0f, 0.0f, 1.0f
+    };
+
+    VAO skyboxVAO;
+    skyboxVAO.Bind();
+    VBO skyboxVBO(skyboxVertices, sizeof(skyboxVertices));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    skyboxVAO.Unbind();
+
     //Texture textureMuro("texture/muro.png");
 
     // Collega la texture al sampler tex0
     glUseProgram(shaderProgram);
     glUniform1i(glGetUniformLocation(shaderProgram, "tex0"), 0);
 
-    const float bigRoomScale = 0.008f; // scala per portare la stanza a dimensioni gestibili
-    Vector3 modelOffset = Vector3(0.0f, 0.0f, 0.0f);          // porta la stanza al centro del sistema
-    Vector3 lightPos(modelOffset.x, modelOffset.y  + 3.0f, modelOffset.z + 0.6);       //luce direttamente sopra al modello
+    const float roomScaleFactor = 0.25f;                          // scala stanza
+    const Vector3 roomOffset(1.9f * roomScaleFactor, 0.29f, 0.28f); // baricentro stanza letto da .obj
+    const float ironScaleFactor = 0.0002f;                        // scala Iron Man
+    const Vector3 ironOffset(0.32f, 0.026f, -0.23f);                  // posizione di Iron Man nella stanza
+
+    Matrix4 roomScale = Matrix4::scale(roomScaleFactor);
+    Matrix4 roomTranslate = Matrix4::traslate(roomOffset);
+    Matrix4 roomModel = roomTranslate.prod_mat_mat(roomScale);
+
+    Matrix4 ironScale = Matrix4::scale(ironScaleFactor);
+    Matrix4 ironTranslate = Matrix4::traslate(ironOffset);
+    Matrix4 ironModel = ironTranslate.prod_mat_mat(ironScale);
+
+
+    // Posizione del cubo luce (in cima alla lampada) e direzione verso il basso
+    Vector3 lightPos(0.32f, 0.58f, -0.24f);      //(0.46f, 0.33f, 0.68f) posizione dentro lampada
+    Vector3 spotDir(0.0f, -1.0f, 0.0f);          // verso il pavimento
 
     //SPOT LIGHT DALL'ALTO 
     glUseProgram(shaderProgram);
     glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.position"), lightPos.x, lightPos.y, lightPos.z);
-    glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.direction"), 0.0f, -1.0f, 0.0f);
+    glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.direction"), spotDir.x, spotDir.y, spotDir.z);
     glUniform1f(glGetUniformLocation(shaderProgram, "spotLight.cutOff"), std::cos(20.5f * M_PI / 180.0f));
     glUniform1f(glGetUniformLocation(shaderProgram, "spotLight.outerCutOff"), std::cos(18.5f * M_PI / 180.0f));
-    glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.ambient"), 0.1f, 0.1f, 0.1f);
+    glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.ambient"), 0.1f, 0.1f, 0.1f); // ambient tenue
     glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.diffuse"), 0.8f, 0.8f, 0.8f);
     glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.specular"), 1.0f, 1.0f, 1.0f);
     glUniform1f(glGetUniformLocation(shaderProgram, "spotLight.constant"), 1.0f);
@@ -288,12 +385,25 @@ glDeleteShader(lightFS);
     glUniform1f(glGetUniformLocation(shaderProgram, "spotLight.quadratic"), 0.032f);
 
     // Posizione iniziale camera: dentro la stanza guardando il centro
-    Vector3 roomCenter = modelOffset;
-    Vector3 eyeStart = roomCenter.sommaVett(Vector3(0.0f, 0.0f, 0.0f)); // più in alto lungo Y e leggermente davanti
+    Vector3 roomCenter = roomOffset;
+    Vector3 eyeStart = roomCenter.sommaVett(Vector3(0.0f, 0.1f, 0.5f)); // sposta la camera davanti e un po' in alto
     float yawStart = std::atan2(roomCenter.x - eyeStart.x, roomCenter.z - eyeStart.z);
     camera.SetPositionAndYaw(eyeStart, yawStart);
 
+    //SKYBOX
 
+    std :: vector<std :: string> facce
+    {
+        "Skybox/bluecloud_right.jpg",   // +X
+        "Skybox/bluecloud_left.jpg",    // -X
+        "Skybox/bluecloud_up.jpg",      // +Y
+        "Skybox/bluecloud_bottom.jpg",  // -Y
+        "Skybox/bluecloud_front.jpg",   // +Z
+        "Skybox/bluecloud_back.jpg"     // -Z
+    };
+
+    //caricamento della cubemap
+    unsigned int cubemapTexture = loadCubemap(facce);
    
         // Loop principale
         while (!glfwWindowShouldClose(window)) {
@@ -301,7 +411,7 @@ glDeleteShader(lightFS);
 
       
         //colore finestra
-        glClearColor(0.3f, 0.07f, 0.08f, 1.0f);
+        glClearColor(0.0f, 0.00f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
        
 
@@ -309,9 +419,8 @@ glDeleteShader(lightFS);
       
 
     // Oggetto fermo
-    Matrix4 scaleModel = Matrix4::scale(bigRoomScale);
-    Matrix4 translateModel = Matrix4::traslate(modelOffset);
-    Matrix4 Model = translateModel.prod_mat_mat(scaleModel);     // scalatura + traslazione per riportare il modello al centro
+   
+    Matrix4 Model = roomModel;     // scalatura + traslazi
 
     // Posizione camera in orbita
     Matrix4 View = camera.GetViewMatrix();
@@ -328,7 +437,7 @@ glDeleteShader(lightFS);
 
     // invio luce + camera
     glUniform3f(glGetUniformLocation(shaderProgram, "lightPos"),  lightPos.x, lightPos.y, lightPos.z);
-    glUniform3f(glGetUniformLocation(shaderProgram, "lightColor"), 1.0f, 1.0f, 1.0f);
+    glUniform3f(glGetUniformLocation(shaderProgram, "lightColor"), 1.0f, 1.0f, 1.0f); // luce puntiforme bianca
     glUniform3f(glGetUniformLocation(shaderProgram, "camPos"),     eye.x, eye.y, eye.z);
     glUniform3f(glGetUniformLocation(shaderProgram, "ambientColor"), 1.0f, 1.0f, 1.0f); // luce ambiente bianca
 
@@ -347,11 +456,22 @@ glDeleteShader(lightFS);
     //cubo.Draw();
     Modello3D.Draw();
 
-    Matrix4 ironScale = Matrix4 :: scale(0.0002f);
-    Matrix4 ironTranslate = Matrix4 :: traslate(Vector3(3.0f, 0.0f, -0.7f));        //posizione dentro la stanza
-    Matrix4 ironModel = ironTranslate.prod_mat_mat(ironScale);
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "Model"), 1, GL_TRUE, ironModel.data());
     IronMan.Draw();
+
+    // === SKYBOX ===
+    glDepthMask(GL_FALSE);
+    glDepthFunc(GL_LEQUAL);
+    glUseProgram(skyboxProgram);
+    glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "View"), 1, GL_TRUE, View.data());
+    glUniformMatrix4fv(glGetUniformLocation(skyboxProgram, "Projection"), 1, GL_TRUE, Projection.data());
+    skyboxVAO.Bind();
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    skyboxVAO.Unbind();
+    glDepthFunc(GL_LESS);
+    glDepthMask(GL_TRUE);
    
 
 
@@ -361,9 +481,10 @@ glDeleteShader(lightFS);
     GLint lightColorLoc = glGetUniformLocation(LightProgram, "lightColor");
     glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f);  // bianco puro
 
-    // 2) MVP per il cubo luce (posizionato in lightPos)
-    Matrix4 lightModel = Matrix4::Identity();
-    lightModel = Matrix4::traslate(lightPos);       //traslazione cubo piccolo 
+    // 2) MVP per il cubo luce (posizionato in lightPos, rimpicciolito e ruotato di 180° attorno a X)
+    Matrix4 lightScale = Matrix4::scale(Vector3(0.08f, 0.08f, 0.08f));      
+    Matrix4 lightTranslate = Matrix4::traslate(lightPos); 
+    Matrix4 lightModel = lightTranslate.prod_mat_mat(lightScale);
     Matrix4 lightMVP = (Projection.prod_mat_mat(View)).prod_mat_mat(lightModel);
 
 
@@ -371,8 +492,8 @@ glDeleteShader(lightFS);
     glUniformMatrix4fv(mvpLocL, 1, GL_TRUE, lightMVP.data());
 
     // 3) disegno cubo luce
-    //lightVAO.Bind();
-    //glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+    lightVAO.Bind();
+    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
     glfwSwapBuffers(window);
     glfwPollEvents();

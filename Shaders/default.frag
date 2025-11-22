@@ -53,15 +53,15 @@ void main() {
 
     // SPOT LIGHT
 
-   vec3 Ls = normalize(spotLight.position - vFragPos);
+   vec3 Ls = normalize(vFragPos - spotLight.position); // vettore dalla luce verso il frammento
 
-    float theta = dot(Ls, normalize(-spotLight.direction));
+    float theta = dot(Ls, normalize(spotLight.direction));
     float epsilon = spotLight.cutOff - spotLight.outerCutOff;
     float intensity = clamp((theta - spotLight.outerCutOff) / epsilon, 0.0, 1.0);
 
     vec3 ambientS = spotLight.ambient;
 
-    float diffS = max(dot(N, Ls), 0.0);
+    float diffS = max(dot(N, -Ls), 0.0); // luce in arrivo = -Ls
     vec3 diffuseS = spotLight.diffuse * diffS;
 
     vec3 Rs = reflect(-Ls, N);

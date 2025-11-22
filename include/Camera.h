@@ -33,8 +33,9 @@ class Camera
         // Imposta manualmente posizione e yaw iniziale (per spawn dentro una stanza)
         void SetPositionAndYaw(const Vector3& position, float yaw);
 
-        private:
+    private:
             float camYaw;
+            float camUpDown;
             float camY;
             float cam_Move_Speed;
 
