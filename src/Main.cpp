@@ -18,7 +18,7 @@
 #include "Model.h"
 #include "Skybox.h"
 
-Camera camera(0.2f, 0.0f, 0.3987f);        //del tipo z, x , y.  --> distanza, angolo iniziale dela camera (rotazione attorno all asse Y), ALTEZZA CAMERA
+Camera camera(0.2f, 0.0f, 0.5387f);        //del tipo z, x , y.  --> distanza, angolo iniziale dela camera (rotazione attorno all asse Y), ALTEZZA CAMERA
 
 void processInput(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -235,7 +235,8 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
     //Texture testTex("Modello3D/diffuse.png");
     //Model Modello3D("big-room/Room-A.obj");
     Model IronMan("iron_man/ironMan.obj");
-    Model Modello3D("CozyRoom/CozyRoom.obj");
+    Model Modello3D("old_bar/Bar.obj");
+    Model Freccette("darts/darts.obj");
     
 
     GLfloat VerticiLuci[] =                         
@@ -353,10 +354,10 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
     glUseProgram(shaderProgram);
     glUniform1i(glGetUniformLocation(shaderProgram, "tex0"), 0);
 
-    const float roomScaleFactor = 0.25f;                          // scala stanza
-    const Vector3 roomOffset(1.9f * roomScaleFactor, 0.29f, 0.28f); // baricentro stanza letto da .obj
+    const float roomScaleFactor = 0.23f;                          // scala stanza
+    const Vector3 roomOffset(1.9f * roomScaleFactor, -0.88f, 0.28f); // baricentro stanza letto da .obj
     const float ironScaleFactor = 0.0002f;                        // scala Iron Man
-    const Vector3 ironOffset(0.04f, 0.026f, 0.5f);                  // posizione di Iron Man nella stanza
+    const Vector3 ironOffset(0.01f, 0.140f, -0.38f);                  // posizione di Iron Man nella stanza
     
 
 
@@ -371,12 +372,30 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
     Matrix4 ironTranslate = Matrix4::traslate(ironOffset);
     Matrix4 ironModel = ironTranslate.prod_mat_mat(ironRotate);
     ironModel = ironModel.prod_mat_mat(ironScale);
+
+    // Freccette: modello molto grande, lo scaliamo e lo posizioniamo su una parete
+    const float dartsScaleFactor = 0.0033f;
+    const Vector3 dartsOffset(0.7f, 0.462f, -2.21f); // posizione approssimativa sulla parete del bar
+    Matrix4 dartsScale = Matrix4::scale(dartsScaleFactor);
+   Matrix4 dartsRotate = Matrix4::rotateY(0.0f); // orienta il bersaglio verso l'interno della stanza
+    Matrix4 dartsTranslate = Matrix4::traslate(dartsOffset);
+    Matrix4 dartsModel = dartsTranslate.prod_mat_mat(dartsRotate);
+    dartsModel = dartsModel.prod_mat_mat(dartsScale);
+
+    //caricamento modello freccette
+    const float DartsScale = 0.2f;
+    const Vector3 DartsOffset(0.06f, 0.150, -0.28f);
+
    
 
 
-    // Posizione del cubo luce (in cima alla lampada) e direzione verso il basso
-    Vector3 lightPos(0.32f, 0.58f, -0.24f);      //(0.46f, 0.33f, 0.68f) posizione dentro lampada
-    Vector3 spotDir(0.0f, -1.0f, 0.0f);          // verso il pavimento
+    // Posizioni dei cubi luce (puoi aggiungere/rimuovere voci per avere più spot)
+    std::vector<Vector3> lightPositions = {
+        Vector3(0.221f, 0.748f, 0.18f),   //cubo originale di luce
+        Vector3(0.240f, 0.748f, -0.476f),    
+         Vector3(0.268f, 0.748f, -1.171f)
+    };
+    Vector3 spotDir = Vector3(0.0f, -1.0f, 0.0f); // raggio verso il basso per tutti
 
     // Posizione iniziale camera: dentro la stanza guardando il centro
     Vector3 roomCenter = roomOffset;
@@ -419,21 +438,25 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
     // Posizione camera in orbita
     Matrix4 View = camera.GetViewMatrix();
     Vector3 eye = camera.GetPosition();
-    Vector3 spotDirCam = camera.GetFront(); // direzione torcia dal punto di vista della camera
 
-    // SPOT LIGHT come torcia in mano (segue posizione e direzione della camera)
     glUseProgram(shaderProgram);
-    glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.position"), eye.x, eye.y, eye.z);
-    glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.direction"), spotDirCam.x, spotDirCam.y, spotDirCam.z);
-    // Nota: cutOff deve essere più grande di outerCutOff come valore di coseno (angolo interno < angolo esterno)
-    glUniform1f(glGetUniformLocation(shaderProgram, "spotLight.cutOff"), std::cos(12.5f * M_PI / 180.0f));   // angolo interno (più stretto)
-    glUniform1f(glGetUniformLocation(shaderProgram, "spotLight.outerCutOff"), std::cos(20.0f * M_PI / 180.0f)); // angolo esterno (più largo)
-    glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.ambient"), 0.1f, 0.1f, 0.1f);
-    glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.diffuse"), 0.8f, 0.8f, 0.8f);
-    glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.specular"), 1.0f, 1.0f, 1.0f);
-    glUniform1f(glGetUniformLocation(shaderProgram, "spotLight.constant"), 1.0f);
-    glUniform1f(glGetUniformLocation(shaderProgram, "spotLight.linear"), 0.09f);
-    glUniform1f(glGetUniformLocation(shaderProgram, "spotLight.quadratic"), 0.032f);
+    // SPOT LIGHTS fissate sui cubi luce e puntate verso il basso
+    int spotCount = static_cast<int>(lightPositions.size());
+    glUniform1i(glGetUniformLocation(shaderProgram, "spotCount"), spotCount);
+    for (int i = 0; i < spotCount; ++i) {                               //il for serve per scorrere il vettore delle spotlight
+        const Vector3& lp = lightPositions[i];
+        std::string base = "spotLights[" + std::to_string(i) + "].";
+        glUniform3f(glGetUniformLocation(shaderProgram, (base + "position").c_str()), lp.x, lp.y, lp.z);
+        glUniform3f(glGetUniformLocation(shaderProgram, (base + "direction").c_str()), spotDir.x, spotDir.y, spotDir.z);
+        glUniform1f(glGetUniformLocation(shaderProgram, (base + "cutOff").c_str()), std::cos(24.0f * M_PI / 180.0f));   // cono moderato
+        glUniform1f(glGetUniformLocation(shaderProgram, (base + "outerCutOff").c_str()), std::cos(28.0f * M_PI / 180.0f));
+        glUniform3f(glGetUniformLocation(shaderProgram, (base + "ambient").c_str()), 0.03f, 0.03f, 0.03f);
+        glUniform3f(glGetUniformLocation(shaderProgram, (base + "diffuse").c_str()), 15.6f, 15.6f, 15.6f);
+        glUniform3f(glGetUniformLocation(shaderProgram, (base + "specular").c_str()), 1.4f, 1.4f, 1.1f);
+        glUniform1f(glGetUniformLocation(shaderProgram, (base + "constant").c_str()), 1.0f);
+        glUniform1f(glGetUniformLocation(shaderProgram, (base + "linear").c_str()), 0.09f);
+        glUniform1f(glGetUniformLocation(shaderProgram, (base + "quadratic").c_str()), 0.032f);
+    }
    
 
     // === DISEGNA CUBO GRANDE (OGGETTO) ===
@@ -445,20 +468,14 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "Projection"), 1, GL_TRUE, Projection.data());      //Projection.data() dice a OpenGL dove inizia la mia matrice in memoria (a)
 
     // invio luce + camera
-    glUniform3f(glGetUniformLocation(shaderProgram, "lightPos"),  lightPos.x, lightPos.y, lightPos.z);
+    // uso il primo cubo come point light di supporto
+    const Vector3& pointLightPos = lightPositions.front();
+    glUniform3f(glGetUniformLocation(shaderProgram, "lightPos"),  pointLightPos.x, pointLightPos.y, pointLightPos.z);
     glUniform3f(glGetUniformLocation(shaderProgram, "lightColor"), 1.0f, 1.0f, 1.0f); // luce puntiforme bianca
     glUniform3f(glGetUniformLocation(shaderProgram, "camPos"),     eye.x, eye.y, eye.z);
     glUniform3f(glGetUniformLocation(shaderProgram, "ambientColor"), 1.0f, 1.0f, 1.0f); // luce ambiente bianca
 
     
-    //effetto torcia con spotlight
-    glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.position"), eye.x, eye.y, eye.z);
-    Vector3 dir = camera.GetFront();
-    glUniform3f(glGetUniformLocation(shaderProgram, "spotLight.direction"), dir.x, dir.y, dir.z);
-    
-
-
-
     // texture
    //textureMuro.Bind(0);
 
@@ -467,6 +484,9 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
 
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "Model"), 1, GL_TRUE, ironModel.data());
     IronMan.Draw();
+
+    glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "Model"), 1, GL_TRUE, dartsModel.data());
+    Freccette.Draw();
 
     // === SKYBOX ===
     glDepthMask(GL_FALSE);
@@ -490,19 +510,19 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
     GLint lightColorLoc = glGetUniformLocation(LightProgram, "lightColor");
     glUniform3f(lightColorLoc, 1.0f, 1.0f, 1.0f);  // bianco puro
 
-    // 2) MVP per il cubo luce (posizionato in lightPos, rimpicciolito e ruotato di 180° attorno a X)
-    Matrix4 lightScale = Matrix4::scale(Vector3(0.08f, 0.08f, 0.08f));      
-    Matrix4 lightTranslate = Matrix4::traslate(lightPos); 
-    Matrix4 lightModel = lightTranslate.prod_mat_mat(lightScale);
-    Matrix4 lightMVP = (Projection.prod_mat_mat(View)).prod_mat_mat(lightModel);
-
-
+    // 2) MVP per ogni cubo luce (posizionato in ogni lightPositions, rimpicciolito)
+    Matrix4 lightScale = Matrix4::scale(Vector3(0.08f, 0.08f, 0.08f));
     GLint mvpLocL = glGetUniformLocation(LightProgram, "MVP");
-    glUniformMatrix4fv(mvpLocL, 1, GL_TRUE, lightMVP.data());
+    for (const auto& lp : lightPositions) {
+        Matrix4 lightTranslate = Matrix4::traslate(lp);
+        Matrix4 lightModel = lightTranslate.prod_mat_mat(lightScale);
+        Matrix4 lightMVP = (Projection.prod_mat_mat(View)).prod_mat_mat(lightModel);
+        glUniformMatrix4fv(mvpLocL, 1, GL_TRUE, lightMVP.data());
 
-    // 3) disegno cubo luce
-    lightVAO.Bind();
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+        // 3) disegno cubo luce
+        lightVAO.Bind();
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+    }
 
     glfwSwapBuffers(window);
     glfwPollEvents();

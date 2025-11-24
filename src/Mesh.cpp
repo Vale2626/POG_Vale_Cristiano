@@ -1,5 +1,6 @@
 #include "Mesh.h"
 #include <cstddef> // Per usare 'offsetof'
+#include <string>
 
 Mesh :: Mesh(std :: vector<Vertex> vertici, std :: vector <unsigned int> indici, std :: vector<std :: shared_ptr<Texture>> textures):
 
@@ -59,13 +60,27 @@ void Mesh::Draw()
     
     //Attiva tutte le texture caricate dalla mesh
     unsigned int unit = 0;
+    bool hasUnlitTexture = false;
     for (auto& tex : textures)   // <— il vettore si chiama "textures"
     {
        if (tex)
        {
             tex->Bind(unit);
+            if (tex->path.find("TextureMaterial_baseColor.png") != std::string::npos) {
+                hasUnlitTexture = true;
+            }
        }
        unit++;
+    }
+
+    // Se lo shader supporta l'uniform forceUnlit, impostalo per questa mesh
+    GLint currentProg = 0;
+    glGetIntegerv(GL_CURRENT_PROGRAM, &currentProg);
+    if (currentProg != 0) {
+        GLint unlitLoc = glGetUniformLocation(static_cast<GLuint>(currentProg), "forceUnlit");
+        if (unlitLoc != -1) {
+            glUniform1i(unlitLoc, hasUnlitTexture ? 1 : 0);
+        }
     }
 
     // Disegna la mesh

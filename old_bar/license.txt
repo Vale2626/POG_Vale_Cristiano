@@ -1,0 +1,8 @@
+Model Information:
+* title:	Old bar
+* source:	https://sketchfab.com/3d-models/old-bar-bab28c8336f944afad0cc759d7f5ec0b
+* author:	katydid (https://sketchfab.com/Katydid.)
+
+Model License:
+* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
+* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works

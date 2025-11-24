@@ -1,0 +1,11 @@
+Model Information:
+* title:	Darts
+* source:	https://sketchfab.com/3d-models/darts-9f5c4f172e304004a8ecf22df7819b1e
+* author:	chaschinkaa (https://sketchfab.com/chaschinkaa)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Darts" (https://sketchfab.com/3d-models/darts-9f5c4f172e304004a8ecf22df7819b1e) by chaschinkaa (https://sketchfab.com/chaschinkaa) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
