@@ -45,15 +45,21 @@ void main() {
         return;
     }
 
-    float ambient = 0.36; // riduci luce ambiente costante per evitare scene bruciate
+    // Scarta frammenti quasi trasparenti per evitare scritture in depth (vetri/fori)
+    if (alpha < 0.05) {
+        discard;
+    }
+
+    float ambient = 0.14; // luce ambiente più bassa per evitare scene bruciate
     vec3 N = normalize(vNormal);
-    vec3 L = normalize(lightPos - vFragPos);    //direzione della luce
-    float diff = max(dot(N, L), 0.0);
+    vec3 L = normalize(lightPos - vFragPos);    // direzione dal frammento verso la luce
+    vec3 Np = (dot(N, L) < 0.0) ? -N : N;       // forza la normale del pavimento a guardare la luce
+    float diff = max(dot(Np, L), 0.0);
 
     vec3 V = normalize(camPos - vFragPos);
-    vec3 R = reflect(-L, N);
+    vec3 R = reflect(-L, Np);
     float specAmount = pow(max(dot(V, R), 0.0), 32.0);
-    float ks = 0.5;
+    float ks = 0.35; // speculare più morbido
 
     vec3 lightingPoint = lightColor * (ambient + diff + ks * specAmount);
    
@@ -62,20 +68,22 @@ void main() {
     vec3 lightingSpot = vec3(0.0);
     for (int i = 0; i < spotCount && i < MAX_SPOTS; ++i) {
         SpotLight sl = spotLights[i];
-        vec3 Ls = normalize(vFragPos - sl.position); // vettore dalla luce verso il frammento
+        // direzione dalla posizione del frammento verso la luce (arrivo luce)
+        vec3 lightDir = normalize(sl.position - vFragPos);
+        vec3 Nspot = (dot(N, lightDir) < 0.0) ? -N : N; // stessa correzione per normali capovolte
 
-        float theta = dot(Ls, normalize(sl.direction));
-        float epsilon = sl.cutOff - sl.outerCutOff;
-        float intensity = clamp((theta - sl.outerCutOff) / epsilon, 0.0, 1.0);
-
+        // angolo tra direzione del cono e verso in cui arriva la luce
+        float theta = dot(lightDir, normalize(-sl.direction));
+        //float epsilon = max(sl.cutOff - sl.outerCutOff, 0.0001);
+        float intensity = smoothstep(sl.outerCutOff, sl.cutOff, theta);
         vec3 ambientS = sl.ambient;
 
-        float diffS = max(dot(N, -Ls), 0.0); // luce in arrivo = -Ls
+        float diffS = max(dot(Nspot, lightDir), 0.0);
         vec3 diffuseS = sl.diffuse * diffS;
 
-        vec3 Rs = reflect(-Ls, N);
+        vec3 Rs = reflect(-lightDir, Nspot);
         float specAmountS = pow(max(dot(V, Rs), 0.0), 32.0);
-        float ksS = 0.5;
+        float ksS = 0.35;
         vec3 specularS = sl.specular * specAmountS * ksS;
 
         float distanceS = length(sl.position - vFragPos);

@@ -79,6 +79,8 @@ int main() {
 
 
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // --- Compilazione shader Oggetto ---
     std::string objectVSsrc = loadTextFile("shaders/default.vert"); // Assicurati che il percorso sia corretto!
@@ -393,7 +395,8 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
     std::vector<Vector3> lightPositions = {
         Vector3(0.221f, 0.748f, 0.18f),   //cubo originale di luce
         Vector3(0.240f, 0.748f, -0.476f),    
-         Vector3(0.268f, 0.748f, -1.171f)
+        Vector3(0.268f, 0.748f, -1.171f),
+        Vector3(0.200, 0.748, 0.85)
     };
     Vector3 spotDir = Vector3(0.0f, -1.0f, 0.0f); // raggio verso il basso per tutti
 
@@ -448,14 +451,14 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
         std::string base = "spotLights[" + std::to_string(i) + "].";
         glUniform3f(glGetUniformLocation(shaderProgram, (base + "position").c_str()), lp.x, lp.y, lp.z);
         glUniform3f(glGetUniformLocation(shaderProgram, (base + "direction").c_str()), spotDir.x, spotDir.y, spotDir.z);
-        glUniform1f(glGetUniformLocation(shaderProgram, (base + "cutOff").c_str()), std::cos(24.0f * M_PI / 180.0f));   // cono moderato
-        glUniform1f(glGetUniformLocation(shaderProgram, (base + "outerCutOff").c_str()), std::cos(28.0f * M_PI / 180.0f));
+        glUniform1f(glGetUniformLocation(shaderProgram, (base + "cutOff").c_str()), std::cos(20.0f * M_PI / 180.0f));   // cono più ampio e morbido
+        glUniform1f(glGetUniformLocation(shaderProgram, (base + "outerCutOff").c_str()), std::cos(30.0f * M_PI / 180.0f));
         glUniform3f(glGetUniformLocation(shaderProgram, (base + "ambient").c_str()), 0.03f, 0.03f, 0.03f);
-        glUniform3f(glGetUniformLocation(shaderProgram, (base + "diffuse").c_str()), 15.6f, 15.6f, 15.6f);
-        glUniform3f(glGetUniformLocation(shaderProgram, (base + "specular").c_str()), 1.4f, 1.4f, 1.1f);
+        glUniform3f(glGetUniformLocation(shaderProgram, (base + "diffuse").c_str()), 3.8f, 3.8f, 3.8f);
+        glUniform3f(glGetUniformLocation(shaderProgram, (base + "specular").c_str()), 0.3f, 0.3f, 0.3f);
         glUniform1f(glGetUniformLocation(shaderProgram, (base + "constant").c_str()), 1.0f);
-        glUniform1f(glGetUniformLocation(shaderProgram, (base + "linear").c_str()), 0.09f);
-        glUniform1f(glGetUniformLocation(shaderProgram, (base + "quadratic").c_str()), 0.032f);
+        glUniform1f(glGetUniformLocation(shaderProgram, (base + "linear").c_str()), 0.14f);
+        glUniform1f(glGetUniformLocation(shaderProgram, (base + "quadratic").c_str()), 0.10f);
     }
    
 
