@@ -239,6 +239,7 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
     Model IronMan("iron_man/ironMan.obj");
     Model Modello3D("old_bar/Bar.obj");
     Model Freccette("darts/darts.obj");
+    Model Finestra("old_bar/Window.obj");
     
 
     GLfloat VerticiLuci[] =                         
@@ -360,6 +361,8 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
     const Vector3 roomOffset(1.9f * roomScaleFactor, -0.88f, 0.28f); // baricentro stanza letto da .obj
     const float ironScaleFactor = 0.0002f;                        // scala Iron Man
     const Vector3 ironOffset(0.01f, 0.140f, -0.38f);                  // posizione di Iron Man nella stanza
+    const float windowScaleFactor = 0.0468f;                        // finestra più piccola (lucernario)
+    const Vector3 windowOffset(-0.1f, 0.57f, -2.0f);               // finestra spostata sul soffitto (foro skybox)
     
 
 
@@ -377,12 +380,23 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
 
     // Freccette: modello molto grande, lo scaliamo e lo posizioniamo su una parete
     const float dartsScaleFactor = 0.0033f;
-    const Vector3 dartsOffset(0.7f, 0.462f, -2.21f); // posizione approssimativa sulla parete del bar
+    const Vector3 dartsOffset(0.7f, 0.462f, -2.22f); // posizione approssimativa sulla parete del bar
     Matrix4 dartsScale = Matrix4::scale(dartsScaleFactor);
    Matrix4 dartsRotate = Matrix4::rotateY(0.0f); // orienta il bersaglio verso l'interno della stanza
     Matrix4 dartsTranslate = Matrix4::traslate(dartsOffset);
     Matrix4 dartsModel = dartsTranslate.prod_mat_mat(dartsRotate);
     dartsModel = dartsModel.prod_mat_mat(dartsScale);
+
+    // Trasformazioni finestra (lucernario orizzontale sul soffitto)
+    Matrix4 windowScale = Matrix4::scale(windowScaleFactor);
+    Matrix4 windowRotateX = Matrix4::rotateX(0.0f); // lieve inclinazione verso asse X
+    Matrix4 windowRotateY = Matrix4::rotateY(90.0f);
+    Matrix4 windowRotateZ = Matrix4::rotateZ(0.0f);  // leggera rotazione attorno a Z
+    Matrix4 windowTranslate = Matrix4::traslate(windowOffset);
+    Matrix4 windowModel = windowTranslate.prod_mat_mat(windowRotateX);
+    windowModel = windowModel.prod_mat_mat(windowRotateY);
+    windowModel = windowModel.prod_mat_mat(windowRotateZ);
+    windowModel = windowModel.prod_mat_mat(windowScale);
 
     //caricamento modello freccette
     const float DartsScale = 0.2f;
@@ -504,6 +518,11 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
     skyboxVAO.Unbind();
     glDepthFunc(GL_LESS);
     glDepthMask(GL_TRUE);
+
+    // Disegna la finestra sopra lo skybox (trasparenza), in modo che se vedo la finestra posso vedere anche la skybox dietro
+    glUseProgram(shaderProgram);
+    glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "Model"), 1, GL_TRUE, windowModel.data());
+    Finestra.Draw();
    
 
 

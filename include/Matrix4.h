@@ -37,6 +37,7 @@ class Matrix4
         static Matrix4 traslate(const Vector3& translation);
         static Matrix4 rotateX(float degrees);
         static Matrix4 rotateY(float degrees);
+        static Matrix4 rotateZ(float degrees);
         static Matrix4 scale(const Vector3& scaling);
         static Matrix4 scale(float uniformScale);
         float Determinante() const;

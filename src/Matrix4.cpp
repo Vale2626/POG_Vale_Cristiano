@@ -484,6 +484,20 @@ Matrix4 Matrix4 :: rotateY(float degrees)
     return Mat4;
 }
 
+Matrix4 Matrix4 :: rotateZ(float degrees)
+{
+    float rad = degrees * (M_PI / 180.0f);
+    float c = std::cos(rad);
+    float s = std::sin(rad);
+
+    Matrix4 Mat4 = Matrix4::Identity();
+    Mat4.a = c;
+    Mat4.b = -s;
+    Mat4.e = s;
+    Mat4.f = c;
+    return Mat4;
+}
+
 Matrix4 Matrix4 :: scale(const Vector3& scaling)
 {
     Matrix4 Mat4 = Matrix4::Identity();

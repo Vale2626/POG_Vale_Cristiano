@@ -1,0 +1,18 @@
+newmtl blinn1SG
+illum 9
+Kd 0.21 0.21 0.24
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+d 0.30
+map_Kd glass.tga
+Ni 1.52
+Ks 0.05 0.05 0.05
+newmtl phong1SG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.57 0.57 0.57
+Tf 1.00 1.00 1.00
+map_Kd legno.jpg
+Ni 1.00
+Ks 0.29 0.29 0.29
+Ns 39.98

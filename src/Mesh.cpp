@@ -66,7 +66,9 @@ void Mesh::Draw()
        if (tex)
        {
             tex->Bind(unit);
-            if (tex->path.find("TextureMaterial_baseColor.png") != std::string::npos) {
+            // Bypassa l'illuminazione su texture piatte o vetro
+            if (tex->path.find("TextureMaterial_baseColor.png") != std::string::npos ||
+                tex->path.find("glass") != std::string::npos) {
                 hasUnlitTexture = true;
             }
        }
