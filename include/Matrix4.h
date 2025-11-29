@@ -63,6 +63,7 @@ class Matrix4
         void set_col4(Vector4 &other);
 
         float* data();                //Il metodo data() restituisce proprio l’indirizzo del primo elemento (a), che in memoria è seguito da tutti gli altri (b, c, d, …).
+        const float* data() const;
 
 };
 

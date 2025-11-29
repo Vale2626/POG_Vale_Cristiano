@@ -373,6 +373,9 @@ Matrix4 Matrix4 :: perspective(float fov, float aspect, float near, float far)
 float* Matrix4::data() { 
     return &a; 
 }
+const float* Matrix4::data() const {
+    return &a;
+}
 
 Matrix4 Matrix4 :: Identity()
 {

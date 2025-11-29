@@ -17,6 +17,7 @@
 #include <vector>
 #include "Model.h"
 #include "Skybox.h"
+#include "TVscreen.h"
 
 Camera camera(0.2f, 0.0f, 0.5387f);        //del tipo z, x , y.  --> distanza, angolo iniziale dela camera (rotazione attorno all asse Y), ALTEZZA CAMERA
 
@@ -356,6 +357,7 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
     // Collega la texture al sampler tex0
     glUseProgram(shaderProgram);
     glUniform1i(glGetUniformLocation(shaderProgram, "tex0"), 0);
+    GLint forceUnlitLoc = glGetUniformLocation(shaderProgram, "forceUnlit");
 
     const float roomScaleFactor = 0.23f;                          // scala stanza
     const Vector3 roomOffset(1.9f * roomScaleFactor, -0.88f, 0.28f); // baricentro stanza letto da .obj
@@ -402,7 +404,28 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
     const float DartsScale = 0.2f;
     const Vector3 DartsOffset(0.06f, 0.150, -0.28f);
 
-   
+    TVscreen tv;
+
+    Texture channel_1("texture/channel_1.png");
+    Texture channel_2("texture/channel_2.png");
+    Texture channel_3("texture/channel_3.png");
+
+    tv.addChannel(&channel_1);
+    tv.addChannel(&channel_2);
+    tv.addChannel(&channel_3);
+
+    // Trasformazione della TV (modifica offset/rotazione per allinearla al modello)
+    const float tvScaleFactor =0.48f; // scala uniforme rispetto a width/height del quad
+    const Vector3 tvOffset(0.788f, 0.467f, 1.45f);
+    Matrix4 tvScale = Matrix4::scale(tvScaleFactor);
+    Matrix4 tvRotateY = Matrix4::rotateY(90.0f);
+    Matrix4 tvRotateX = Matrix4::rotateX(45.0f);
+    Matrix4 tvTranslate = Matrix4::traslate(tvOffset);
+    Matrix4 tvModel = tvTranslate.prod_mat_mat(tvRotateX);
+    tvModel = tvModel.prod_mat_mat(tvScale);
+
+
+
 
 
     // Posizioni dei cubi luce (puoi aggiungere/rimuovere voci per avere più spot)
@@ -410,7 +433,8 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
         Vector3(0.221f, 0.748f, 0.18f),   //cubo originale di luce
         Vector3(0.240f, 0.748f, -0.476f),    
         Vector3(0.268f, 0.748f, -1.171f),
-        Vector3(0.200, 0.748, 0.85)
+        Vector3(0.200, 0.748, 0.85),
+        Vector3(-0.4253, 0.748, 0.8311)
     };
     Vector3 spotDir = Vector3(0.0f, -1.0f, 0.0f); // raggio verso il basso per tutti
 
@@ -438,6 +462,7 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
         // Loop principale
         while (!glfwWindowShouldClose(window)) {
         processInput(window);
+        double now = glfwGetTime();
 
       
         //colore finestra
@@ -457,6 +482,11 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
     Vector3 eye = camera.GetPosition();
 
     glUseProgram(shaderProgram);
+    if (forceUnlitLoc != -1) glUniform1i(forceUnlitLoc, 0);
+
+    // input TV
+    tv.ChangeChannel(window, now);
+
     // SPOT LIGHTS fissate sui cubi luce e puntate verso il basso
     int spotCount = static_cast<int>(lightPositions.size());
     glUniform1i(glGetUniformLocation(shaderProgram, "spotCount"), spotCount);
@@ -468,7 +498,7 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
         glUniform1f(glGetUniformLocation(shaderProgram, (base + "cutOff").c_str()), std::cos(20.0f * M_PI / 180.0f));   // cono più ampio e morbido
         glUniform1f(glGetUniformLocation(shaderProgram, (base + "outerCutOff").c_str()), std::cos(30.0f * M_PI / 180.0f));
         glUniform3f(glGetUniformLocation(shaderProgram, (base + "ambient").c_str()), 0.03f, 0.03f, 0.03f);
-        glUniform3f(glGetUniformLocation(shaderProgram, (base + "diffuse").c_str()), 3.8f, 3.8f, 3.8f);
+        glUniform3f(glGetUniformLocation(shaderProgram, (base + "diffuse").c_str()), 3.2f, 3.2f, 3.2f);
         glUniform3f(glGetUniformLocation(shaderProgram, (base + "specular").c_str()), 0.3f, 0.3f, 0.3f);
         glUniform1f(glGetUniformLocation(shaderProgram, (base + "constant").c_str()), 1.0f);
         glUniform1f(glGetUniformLocation(shaderProgram, (base + "linear").c_str()), 0.14f);
@@ -504,6 +534,11 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
 
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "Model"), 1, GL_TRUE, dartsModel.data());
     Freccette.Draw();
+
+    // TV screen (unlit) - premere frecce dx/sx o 1/2/3
+    if (forceUnlitLoc != -1) glUniform1i(forceUnlitLoc, 1);
+    tv.draw(shaderProgram, tvModel);
+    if (forceUnlitLoc != -1) glUniform1i(forceUnlitLoc, 0);
 
     // === SKYBOX ===
     glDepthMask(GL_FALSE);
