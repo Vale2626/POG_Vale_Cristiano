@@ -7,17 +7,18 @@ TVscreen::TVscreen()
     , lastChannelSwitch(0.0)
 {
     // rettangolo piccolo (solo fronte) con posizioni + UV
-    float width = 0.25f;
-    float height = 0.16f;
+    float width = 0.2671f;
+    float height = 0.29f;
 
+    // UV ribaltati in verticale e specchiati in orizzontale per avere testo orientato correttamente
     float vertici[] = {
-        -width / 2, -height / 2, 0.0f, 0.0f, 0.0f,
-         width / 2, -height / 2, 0.0f, 1.0f, 0.0f,
-         width / 2,  height / 2, 0.0f, 1.0f, 1.0f,
+        -width / 2, -height / 2, 0.0f, 1.0f, 1.0f,
+         width / 2, -height / 2, 0.0f, 0.0f, 1.0f,
+         width / 2,  height / 2, 0.0f, 0.0f, 0.0f,
 
-         width / 2,  height / 2, 0.0f, 1.0f, 1.0f,
-        -width / 2,  height / 2, 0.0f, 0.0f, 1.0f,
-        -width / 2, -height / 2, 0.0f, 0.0f, 0.0f
+         width / 2,  height / 2, 0.0f, 0.0f, 0.0f,
+        -width / 2,  height / 2, 0.0f, 1.0f, 0.0f,
+        -width / 2, -height / 2, 0.0f, 1.0f, 1.0f
     };
 
     vao.Bind();

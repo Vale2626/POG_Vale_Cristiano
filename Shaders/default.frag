@@ -11,6 +11,7 @@ uniform vec3 lightPos;     // posizione cubo-luce
 uniform vec3 lightColor;   // es. (1,1,1)
 uniform vec3 camPos;       // posizione camera
 uniform bool forceUnlit;   // true = bypass illuminazione (per texture che devono restare piatte)
+uniform float TextureBrightness; // fattore di luminosità per gli oggetti unlit (es. TV)
 
 struct SpotLight
 {
@@ -41,7 +42,7 @@ void main() {
 
     // Se richiesto, salta tutta l'illuminazione per questa mesh
     if (forceUnlit) {
-        FragColor = vec4(albedo, alpha);
+        FragColor = vec4(albedo * TextureBrightness, alpha);
         return;
     }
 

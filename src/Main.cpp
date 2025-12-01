@@ -358,6 +358,8 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
     glUseProgram(shaderProgram);
     glUniform1i(glGetUniformLocation(shaderProgram, "tex0"), 0);
     GLint forceUnlitLoc = glGetUniformLocation(shaderProgram, "forceUnlit");
+    GLint textureBrightnessLoc = glGetUniformLocation(shaderProgram, "TextureBrightness");
+    if (textureBrightnessLoc != -1) glUniform1f(textureBrightnessLoc, 1.0f);
 
     const float roomScaleFactor = 0.23f;                          // scala stanza
     const Vector3 roomOffset(1.9f * roomScaleFactor, -0.88f, 0.28f); // baricentro stanza letto da .obj
@@ -416,10 +418,11 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
 
     // Trasformazione della TV (modifica offset/rotazione per allinearla al modello)
     const float tvScaleFactor =0.48f; // scala uniforme rispetto a width/height del quad
-    const Vector3 tvOffset(0.788f, 0.467f, 1.45f);
+    const float tvBrightness = 0.76f;  // riduce luminosità texture TV per integrarla nella scena
+    const Vector3 tvOffset(0.829f, 0.4336f, 1.42f);
     Matrix4 tvScale = Matrix4::scale(tvScaleFactor);
     Matrix4 tvRotateY = Matrix4::rotateY(90.0f);
-    Matrix4 tvRotateX = Matrix4::rotateX(45.0f);
+    Matrix4 tvRotateX = Matrix4::rotateX(44.0f);
     Matrix4 tvTranslate = Matrix4::traslate(tvOffset);
     Matrix4 tvModel = tvTranslate.prod_mat_mat(tvRotateX);
     tvModel = tvModel.prod_mat_mat(tvScale);
@@ -537,8 +540,10 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
 
     // TV screen (unlit) - premere frecce dx/sx o 1/2/3
     if (forceUnlitLoc != -1) glUniform1i(forceUnlitLoc, 1);
+    if (textureBrightnessLoc != -1) glUniform1f(textureBrightnessLoc, tvBrightness);
     tv.draw(shaderProgram, tvModel);
     if (forceUnlitLoc != -1) glUniform1i(forceUnlitLoc, 0);
+    if (textureBrightnessLoc != -1) glUniform1f(textureBrightnessLoc, 1.0f);
 
     // === SKYBOX ===
     glDepthMask(GL_FALSE);
