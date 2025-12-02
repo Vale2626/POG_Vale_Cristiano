@@ -241,6 +241,7 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
     Model Modello3D("old_bar/Bar.obj");
     Model Freccette("darts/darts.obj");
     Model Finestra("old_bar/Window.obj");
+    Model Lamp("pub_wall_lamp/lamp.obj");
     
 
     GLfloat VerticiLuci[] =                         
@@ -360,6 +361,9 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
     GLint forceUnlitLoc = glGetUniformLocation(shaderProgram, "forceUnlit");
     GLint textureBrightnessLoc = glGetUniformLocation(shaderProgram, "TextureBrightness");
     if (textureBrightnessLoc != -1) glUniform1f(textureBrightnessLoc, 1.0f);
+    const float globalAmbientStrength = 0.13f;      //luminosità della scena
+    GLint ambientStrengthLoc = glGetUniformLocation(shaderProgram, "ambientStrength");
+    if (ambientStrengthLoc != -1) glUniform1f(ambientStrengthLoc, globalAmbientStrength);
 
     const float roomScaleFactor = 0.23f;                          // scala stanza
     const Vector3 roomOffset(1.9f * roomScaleFactor, -0.88f, 0.28f); // baricentro stanza letto da .obj
@@ -370,36 +374,36 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
     
 
 
-    Matrix4 roomScale = Matrix4::scale(roomScaleFactor);
-    Matrix4 roomRotate = Matrix4::rotateY(90.0f);                 // ruoto la stanza: base allineata sull'asse X
-    Matrix4 roomTranslate = Matrix4::traslate(roomOffset);
+    Matrix4 roomScale = Matrix4 :: scale(roomScaleFactor);
+    Matrix4 roomRotate = Matrix4 :: rotateY(90.0f);                 // ruoto la stanza: base allineata sull'asse X
+    Matrix4 roomTranslate = Matrix4 :: traslate(roomOffset);
     Matrix4 roomModel = roomTranslate.prod_mat_mat(roomRotate);
-    roomModel = roomModel.prod_mat_mat(roomScale);
+    roomModel = roomModel.prod_mat_mat(roomScale); 
 
-    Matrix4 ironScale = Matrix4::scale(ironScaleFactor);
-    Matrix4 ironRotate = Matrix4::rotateY(90.0f);                 // ruoto Iron Man di 45° attorno a Y
-    Matrix4 ironTranslate = Matrix4::traslate(ironOffset);
+    Matrix4 ironScale = Matrix4 :: scale(ironScaleFactor);
+    Matrix4 ironRotate = Matrix4 :: rotateY(90.0f);                 // ruoto Iron Man di 45° attorno a Y
+    Matrix4 ironTranslate = Matrix4 :: traslate(ironOffset);
     Matrix4 ironModel = ironTranslate.prod_mat_mat(ironRotate);
     ironModel = ironModel.prod_mat_mat(ironScale);
 
     // Freccette: modello molto grande, lo scaliamo e lo posizioniamo su una parete
     const float dartsScaleFactor = 0.0033f;
     const Vector3 dartsOffset(0.7f, 0.462f, -2.22f); // posizione approssimativa sulla parete del bar
-    Matrix4 dartsScale = Matrix4::scale(dartsScaleFactor);
-   Matrix4 dartsRotate = Matrix4::rotateY(0.0f); // orienta il bersaglio verso l'interno della stanza
-    Matrix4 dartsTranslate = Matrix4::traslate(dartsOffset);
+    Matrix4 dartsScale = Matrix4 :: scale(dartsScaleFactor);
+   Matrix4 dartsRotate = Matrix4 :: rotateY(0.0f); // orienta il bersaglio verso l'interno della stanza
+    Matrix4 dartsTranslate = Matrix4 :: traslate(dartsOffset);
     Matrix4 dartsModel = dartsTranslate.prod_mat_mat(dartsRotate);
     dartsModel = dartsModel.prod_mat_mat(dartsScale);
 
     // Trasformazioni finestra (lucernario orizzontale sul soffitto)
-    Matrix4 windowScale = Matrix4::scale(windowScaleFactor);
-    Matrix4 windowRotateX = Matrix4::rotateX(0.0f); // lieve inclinazione verso asse X
-    Matrix4 windowRotateY = Matrix4::rotateY(90.0f);
-    Matrix4 windowRotateZ = Matrix4::rotateZ(0.0f);  // leggera rotazione attorno a Z
-    Matrix4 windowTranslate = Matrix4::traslate(windowOffset);
+    Matrix4 windowScale = Matrix4 :: scale(windowScaleFactor);
+    Matrix4 windowRotateX = Matrix4 :: rotateX(0.0f); // lieve inclinazione verso asse X
+    Matrix4 windowRotateY = Matrix4 :: rotateY(90.0f);
+    Matrix4 windowRotateZ = Matrix4 :: rotateZ(0.0f);  // leggera rotazione attorno a Z
+    Matrix4 windowTranslate = Matrix4 :: traslate(windowOffset);
     Matrix4 windowModel = windowTranslate.prod_mat_mat(windowRotateX);
     windowModel = windowModel.prod_mat_mat(windowRotateY);
-    windowModel = windowModel.prod_mat_mat(windowRotateZ);
+    windowModel = windowModel.prod_mat_mat(windowRotateZ); 
     windowModel = windowModel.prod_mat_mat(windowScale);
 
     //caricamento modello freccette
@@ -417,15 +421,26 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
     tv.addChannel(&channel_3);
 
     // Trasformazione della TV (modifica offset/rotazione per allinearla al modello)
-    const float tvScaleFactor =0.48f; // scala uniforme rispetto a width/height del quad
-    const float tvBrightness = 0.76f;  // riduce luminosità texture TV per integrarla nella scena
+    const float tvScaleFactor = 0.48f; // scala uniforme rispetto a width/height del quad
+    const float tvBrightness = 0.71f;  // riduce luminosità texture TV per integrarla nella scena
     const Vector3 tvOffset(0.829f, 0.4336f, 1.42f);
-    Matrix4 tvScale = Matrix4::scale(tvScaleFactor);
-    Matrix4 tvRotateY = Matrix4::rotateY(90.0f);
-    Matrix4 tvRotateX = Matrix4::rotateX(44.0f);
-    Matrix4 tvTranslate = Matrix4::traslate(tvOffset);
+    Matrix4 tvScale = Matrix4 :: scale(tvScaleFactor);
+    Matrix4 tvRotateY = Matrix4 :: rotateY(90.0f);
+    Matrix4 tvRotateX = Matrix4 :: rotateX(44.0f);
+    Matrix4 tvTranslate = Matrix4 :: traslate(tvOffset);
     Matrix4 tvModel = tvTranslate.prod_mat_mat(tvRotateX);
     tvModel = tvModel.prod_mat_mat(tvScale);
+
+    const float LampScaleFactor = 0.0000057f;  // modello molto grande: serve ridurre drasticamente
+    const Vector3 Lampoffset(1.56f, 0.69f, 0.58f);       //posizione lampada
+    Matrix4 LampScale = Matrix4 :: scale(LampScaleFactor);
+    Matrix4 LampRotateX = Matrix4 :: rotateX(0.0f);
+    Matrix4 LampRotateY = Matrix4 :: rotateY(-90.0f);
+    Matrix4 LampROtateZ = Matrix4 :: rotateZ(0.0f);
+    Matrix4 LampTranslate = Matrix4 :: traslate(Lampoffset);
+    Matrix4 LampModel = LampTranslate.prod_mat_mat(LampRotateY);
+    LampModel = LampModel.prod_mat_mat(LampScale);
+
 
 
 
@@ -437,7 +452,8 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
         Vector3(0.240f, 0.748f, -0.476f),    
         Vector3(0.268f, 0.748f, -1.171f),
         Vector3(0.200, 0.748, 0.85),
-        Vector3(-0.4253, 0.748, 0.8311)
+        Vector3(-0.4253, 0.748, 0.8311),
+        Vector3(1.534f, 0.759f, 0.58f)
     };
     Vector3 spotDir = Vector3(0.0f, -1.0f, 0.0f); // raggio verso il basso per tutti
 
@@ -498,14 +514,14 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
         std::string base = "spotLights[" + std::to_string(i) + "].";
         glUniform3f(glGetUniformLocation(shaderProgram, (base + "position").c_str()), lp.x, lp.y, lp.z);
         glUniform3f(glGetUniformLocation(shaderProgram, (base + "direction").c_str()), spotDir.x, spotDir.y, spotDir.z);
-        glUniform1f(glGetUniformLocation(shaderProgram, (base + "cutOff").c_str()), std::cos(20.0f * M_PI / 180.0f));   // cono più ampio e morbido
-        glUniform1f(glGetUniformLocation(shaderProgram, (base + "outerCutOff").c_str()), std::cos(30.0f * M_PI / 180.0f));
-        glUniform3f(glGetUniformLocation(shaderProgram, (base + "ambient").c_str()), 0.03f, 0.03f, 0.03f);
-        glUniform3f(glGetUniformLocation(shaderProgram, (base + "diffuse").c_str()), 3.2f, 3.2f, 3.2f);
-        glUniform3f(glGetUniformLocation(shaderProgram, (base + "specular").c_str()), 0.3f, 0.3f, 0.3f);
+        glUniform1f(glGetUniformLocation(shaderProgram, (base + "cutOff").c_str()), std::cos(17.0f * M_PI / 180.0f));   // cono più stretto per evitare leakage sulle pareti
+        glUniform1f(glGetUniformLocation(shaderProgram, (base + "outerCutOff").c_str()), std::cos(26.0f * M_PI / 180.0f));
+        glUniform3f(glGetUniformLocation(shaderProgram, (base + "ambient").c_str()), 0.02f, 0.02f, 0.02f);
+        glUniform3f(glGetUniformLocation(shaderProgram, (base + "diffuse").c_str()), 1.7f, 1.7f, 1.7f);
+        glUniform3f(glGetUniformLocation(shaderProgram, (base + "specular").c_str()), 0.25f, 0.25f, 0.25f);
         glUniform1f(glGetUniformLocation(shaderProgram, (base + "constant").c_str()), 1.0f);
-        glUniform1f(glGetUniformLocation(shaderProgram, (base + "linear").c_str()), 0.14f);
-        glUniform1f(glGetUniformLocation(shaderProgram, (base + "quadratic").c_str()), 0.10f);
+        glUniform1f(glGetUniformLocation(shaderProgram, (base + "linear").c_str()), 0.28f);
+        glUniform1f(glGetUniformLocation(shaderProgram, (base + "quadratic").c_str()), 0.36f);
     }
    
 
@@ -523,7 +539,6 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
     glUniform3f(glGetUniformLocation(shaderProgram, "lightPos"),  pointLightPos.x, pointLightPos.y, pointLightPos.z);
     glUniform3f(glGetUniformLocation(shaderProgram, "lightColor"), 1.0f, 1.0f, 1.0f); // luce puntiforme bianca
     glUniform3f(glGetUniformLocation(shaderProgram, "camPos"),     eye.x, eye.y, eye.z);
-    glUniform3f(glGetUniformLocation(shaderProgram, "ambientColor"), 1.0f, 1.0f, 1.0f); // luce ambiente bianca
 
     
     // texture
@@ -563,6 +578,9 @@ glUniform1i(glGetUniformLocation(skyboxProgram, "skybox"), 0);
     glUseProgram(shaderProgram);
     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "Model"), 1, GL_TRUE, windowModel.data());
     Finestra.Draw();
+
+     glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "Model"), 1, GL_TRUE, LampModel.data());
+    Lamp.Draw();
    
 
 

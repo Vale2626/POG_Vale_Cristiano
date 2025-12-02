@@ -57,19 +57,22 @@ void Mesh::setupMesh()
 
 void Mesh::Draw()
 {
-    
     //Attiva tutte le texture caricate dalla mesh
     unsigned int unit = 0;
     bool hasUnlitTexture = false;
+    float meshBrightness = 1.0f;
     for (auto& tex : textures)   // <— il vettore si chiama "textures"
     {
        if (tex)
        {
             tex->Bind(unit);
-            // Bypassa l'illuminazione su texture piatte o vetro
-            if (tex->path.find("TextureMaterial_baseColor.png") != std::string::npos ||
-                tex->path.find("glass") != std::string::npos) {
+            // Bypassa l'illuminazione solo su vetro
+            if (tex->path.find("glass") != std::string::npos) {
                 hasUnlitTexture = true;
+            }
+            // modifico la texture specifica per il muro bianco di mattoni dato che era troppo luminosa
+            if (tex->path.find("TextureMaterial_6_baseColor") != std::string::npos) {
+                meshBrightness = 0.006f;
             }
        }
        unit++;
@@ -83,12 +86,24 @@ void Mesh::Draw()
         if (unlitLoc != -1) {
             glUniform1i(unlitLoc, hasUnlitTexture ? 1 : 0);
         }
+        GLint brightnessLoc = glGetUniformLocation(static_cast<GLuint>(currentProg), "TextureBrightness");
+        if (brightnessLoc != -1) {
+            glUniform1f(brightnessLoc, meshBrightness);
+        }
     }
 
     // Disegna la mesh
     vao.Bind();
     glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indici.size()), GL_UNSIGNED_INT, 0);
     vao.Unbind();
+
+    // ripristina luminosità di default se abbiamo regolato
+    if (meshBrightness != 1.0f && currentProg != 0) {
+        GLint brightnessLoc = glGetUniformLocation(static_cast<GLuint>(currentProg), "TextureBrightness");
+        if (brightnessLoc != -1) {
+            glUniform1f(brightnessLoc, 1.0f);
+        }
+    }
 
     glActiveTexture(GL_TEXTURE0);  // reset opzionale
 }

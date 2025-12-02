@@ -10,6 +10,7 @@ uniform sampler2D tex0;    //texture del modello
 uniform vec3 lightPos;     // posizione cubo-luce
 uniform vec3 lightColor;   // es. (1,1,1)
 uniform vec3 camPos;       // posizione camera
+uniform float ambientStrength; // intensità ambiente globale
 uniform bool forceUnlit;   // true = bypass illuminazione (per texture che devono restare piatte)
 uniform float TextureBrightness; // fattore di luminosità per gli oggetti unlit (es. TV)
 
@@ -37,12 +38,12 @@ uniform SpotLight spotLights[MAX_SPOTS];    //vettore per le spotlight dato che 
 void main() {
 
     vec4 texel = texture(tex0, vTex);       //Un texel è l'unità fondamentale di una texture, texel = colore della texture
-    vec3 albedo = texel.rgb;
+    vec3 albedo = texel.rgb * TextureBrightness; // applica brightness anche ai materiali illuminati
     float alpha = texel.a;      //salvataggio del canale alpha
 
     // Se richiesto, salta tutta l'illuminazione per questa mesh
     if (forceUnlit) {
-        FragColor = vec4(albedo * TextureBrightness, alpha);
+        FragColor = vec4(albedo, alpha);
         return;
     }
 
@@ -51,9 +52,11 @@ void main() {
         discard;
     }
 
-    float ambient = 0.14; // luce ambiente più bassa per evitare scene bruciate
+    vec3 globalAmbient = vec3(ambientStrength);
     vec3 N = normalize(vNormal);
-    vec3 L = normalize(lightPos - vFragPos);    // direzione dal frammento verso la luce
+    vec3 toLight = lightPos - vFragPos;
+    float pointDistance = length(toLight);
+    vec3 L = normalize(toLight);    // direzione dal frammento verso la luce
     vec3 Np = (dot(N, L) < 0.0) ? -N : N;       // forza la normale del pavimento a guardare la luce
     float diff = max(dot(Np, L), 0.0);
 
@@ -62,7 +65,9 @@ void main() {
     float specAmount = pow(max(dot(V, R), 0.0), 32.0);
     float ks = 0.35; // speculare più morbido
 
-    vec3 lightingPoint = lightColor * (ambient + diff + ks * specAmount);
+    // attenuazione semplice per il punto luce principale
+    float attenuationPoint = 1.0 / (1.0 + 0.22 * pointDistance + 0.20 * pointDistance * pointDistance);
+    vec3 lightingPoint = lightColor * (diff + ks * specAmount) * attenuationPoint;
    
 
     // SPOT LIGHTS multiple
@@ -97,11 +102,10 @@ void main() {
     }
 
     //somma di tutte le luci
-    vec3 totalLight = lightingPoint + lightingSpot;
-
+    vec3 totalLight = globalAmbient + lightingPoint + lightingSpot;
 
     //colore finale
-    vec3 final_rgb = albedo * totalLight;
+    vec3 final_rgb = clamp(albedo * totalLight, 0.0, 1.0);
     FragColor = vec4(final_rgb, alpha);
 }
    //Colore figura, texture modulata dal colore interpolato
